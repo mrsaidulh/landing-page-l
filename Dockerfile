@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install all dependencies (including devDependencies required for tailwind/vite build)
-RUN npm ci
+RUN npm install
 
 # Copy all the project source files
 COPY . .
@@ -27,7 +27,7 @@ ENV NODE_ENV=production
 COPY package*.json ./
 
 # Install only production dependencies for minor disk footprint and high security
-RUN npm ci --only=production
+RUN npm install --omit=dev
 
 # Copy compiled bundles from the builder stage
 COPY --from=builder /app/dist ./dist
