@@ -3,8 +3,8 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 
 // CRM Defaults provided by the user
-const DEFAULT_CRM_URL = "https://ais-dev-j3eztkb6zhbbumcpcawtoj-545640989638.asia-southeast1.run.app/api";
-const DEFAULT_CRM_KEY = "irc_live_37479672f83006290538cbb6744d87ed";
+const DEFAULT_CRM_URL = "https://crm.ieltsrevolution.com/api";
+const DEFAULT_CRM_KEY = "irc_live_1378a8fdf4bef3b019d9606a6f1095d1";
 
 /**
  * Creates dynamic, correct endpoint routes regardless of whether crmUrl contains "/api" or trailing slashes.
