@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   BookOpen, 
   Check, 
@@ -93,6 +94,26 @@ const UPGRADE_SAMPLES: UpgradeSample[] = [
 export default function App() {
   // Navigation states
   const [activeTab, setActiveTab] = useState<'all' | 'task1' | 'task2' | 'evaluation'>('all');
+
+  // Promo Banner State for animated rotating text
+  const bannerTexts = [
+    {
+      text: "স্পেশাল অফার! আজ ভর্তি হলে পাচ্ছেন ১০টি ফুল রাইটিং স্ক্রিপ্ট একদম ফ্রি ইভ্যালুয়েশন!",
+      cta: "অফারটি নিন ➔"
+    },
+    {
+      text: "Special Offer! Enroll today and get 10 Full Writing Script evaluations completely FREE!",
+      cta: "Grab Offer ➔"
+    }
+  ];
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentBannerIndex((prev) => (prev + 1) % bannerTexts.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Contact/Booking state variables
   const [bookingName, setBookingName] = useState('');
@@ -397,10 +418,23 @@ export default function App() {
     <div className="bg-bg-light text-slate-800 antialiased font-sans min-h-screen scroll-smooth">
       
       {/* Dynamic Promotion Banner */}
-      <div id="promo-banner" className="bg-accent-red text-white py-2 px-4 text-center text-xs md:text-sm font-semibold tracking-wide flex justify-center items-center gap-2">
+      <div id="promo-banner" className="bg-accent-red text-white py-2 px-4 text-center text-xs md:text-sm font-semibold tracking-wide flex justify-center items-center gap-2 overflow-hidden min-h-[36px] md:min-h-[40px] relative">
         <Sparkles className="w-4 h-4 animate-pulse hidden sm:inline" />
-        <span>স্পেশাল অফার! আজ ভর্তি হলে পাচ্ছেন ১০টি ফুল রাইটিং স্ক্রিপ্ট একদম ফ্রি ইভ্যালুয়েশন!</span>
-        <a href="#pricing" className="underline hover:text-accent-gold ml-2 transition">অফারটি নিন ➔</a>
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={currentBannerIndex}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="inline-flex items-center gap-1 flex-wrap justify-center"
+          >
+            <span>{bannerTexts[currentBannerIndex].text}</span>
+            <a href="#pricing" className="underline hover:text-accent-gold ml-2 transition font-bold whitespace-nowrap">
+              {bannerTexts[currentBannerIndex].cta}
+            </a>
+          </motion.span>
+        </AnimatePresence>
       </div>
 
       {/* Navigation Header */}
@@ -448,11 +482,11 @@ export default function App() {
           
           {/* Hero Content Left */}
           <div className="lg:col-span-7 space-y-6">
-            <span className="inline-flex items-center gap-1.5 bg-accent-red/20 text-accent-red border border-accent-red/30 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
-              <Sparkles className="w-3 h-3 text-accent-red" /> IELTS Writing Dedicated Batch
+            <span className="inline-flex items-center gap-1.5 bg-accent-gold/20 text-accent-gold border border-accent-gold/30 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
+              <Sparkles className="w-3 h-3 text-accent-gold" /> IELTS Writing Dedicated Batch
             </span>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-sans tracking-tight">
-              আইইএলটিএস রাইটিং-এ <span className="text-accent-gold">ব্যান্ড ৭.০+</span> পাওয়ার বাস্তবমুখী গাইডলাইন
+              IELTS Writing-এ <span className="text-accent-gold">Band ৭.০+</span> পাওয়ার বাস্তবমুখী গাইডলাইন
             </h1>
             <p className="text-slate-300 text-base md:text-lg max-w-2xl leading-relaxed">
               অনেকেরই লিসেনিং বা রিডিং-এ ভালো স্কোর আসলেও রাইটিং মডিউলে এসে আটকে যান। সঠিক গ্রামার, রিচ ভোকাবুলারি এবং লজিক্যাল আইডিয়া ডেভেলপমেন্টের অভাব দূর করতেই আমাদের এই ডেডিকেটেড রাইটিং কোর্স।
@@ -792,7 +826,7 @@ export default function App() {
             <span className="text-accent-gold font-bold text-xs uppercase tracking-widest bg-accent-gold/10 px-3 py-1 rounded-full border border-accent-gold/20 flex items-center gap-1 w-max mx-auto">
               <Zap className="w-3 h-3 text-accent-gold" /> Practice & Upgrade Simulator
             </span>
-            <h2 className="text-2xl md:text-4xl font-bold">আইইএলটিএস রাইটিং আপগ্রেডার (Band 5.5 vs 7.5+)</h2>
+            <h2 className="text-2xl md:text-4xl font-bold">IELTS Writing Upgrader (Band 5.5 vs 7.5+)</h2>
             <p className="text-slate-300 text-sm md:text-base">
               নিচে যেকোনো একটি মডিউল বা টপিক সিলেক্ট করে দেখুন কিভাবে সাধারণ বাক্যগুলোকে প্রফেশনাল এবং হাই-স্কোরিং রাইটিং-এ পরিবর্তন করা যায়।
             </p>
@@ -981,10 +1015,10 @@ export default function App() {
             <span className="text-accent-red font-bold text-xs uppercase tracking-wider bg-red-50 px-3 py-1 rounded-full border border-red-100">
               Why IELTS Revolution?
             </span>
-            <h2 className="text-2xl md:text-4xl font-bold text-navy-primary mt-3">আইইএলটিএস রাইটিং মডিউলে আপনার দুর্বলতা কোথায়?</h2>
+            <h2 className="text-2xl md:text-4xl font-bold text-navy-primary mt-3">IELTS Writing Module-এ আপনার দুর্বলতা কোথায়?</h2>
             <div className="h-1.5 w-20 bg-accent-red mx-auto mt-4 rounded-full"></div>
             <p className="text-slate-600 mt-4 text-sm md:text-base">
-              আমরা কোনো সাধারণ বা গতানুগতিক মুখস্থ টেমপ্লেট শিখাই না। বরং আইইএলটিএস ব্যান্ড ডিসক্রিপ্টরের অফিশিয়াল ৪টি মানদণ্ড নিখুঁতভাবে মেনে রাইটিং ইমপ্রুভ করতে সাহায্য করি।
+              আমরা কোনো সাধারণ বা গতানুগতিক মুখস্থ টেমপ্লেট শিখাই না। বরং IELTS Band ডিসক্রিপ্টরের অফিশিয়াল ৪টি মানদণ্ড নিখুঁতভাবে মেনে রাইটিং ইমপ্রুভ করতে সাহায্য করি।
             </p>
           </div>
 
@@ -1062,7 +1096,7 @@ export default function App() {
             <span className="text-xs bg-navy-primary text-white font-bold uppercase tracking-wider px-3 py-1 rounded">
               Interactive Live Correction Demo 💻
             </span>
-            <h2 className="text-2xl md:text-4xl font-bold text-navy-primary mt-3">লাইন-বাই-লাইন ট্রেইনার কারেকশন পোর্টাল</h2>
+            <h2 className="text-2xl md:text-4xl font-bold text-navy-primary mt-3">Line-by-line ট্রেইনার কারেকশন পোর্টাল</h2>
             <div className="h-1 w-16 bg-accent-red mx-auto mt-3"></div>
             <p className="text-slate-600 text-xs md:text-sm mt-3">
               আমাদের শিক্ষার্থীরা কিভাবে স্ক্রিপ্ট সাবমিট করে এবং কিভাবে ট্রেইনার প্রতিটি ভুল সংশোধন করে তার একটি ডেমো ইন্টারঅ্যাক্টিভ প্রিভিউ নিচে দেওয়া হলো। ভুল লাল বাক্যে ক্লিক করুন।
@@ -1114,7 +1148,7 @@ export default function App() {
                 <h3 className="text-lg font-bold flex items-center gap-2 mb-2">
                   <MessageSquare className="w-5 h-5 text-accent-gold" /> ট্রেইনার ফিডব্যাক আউটপুট
                 </h3>
-                <p className="text-slate-300 text-xs mb-4">ভুলটির ওপর ক্লিক করলে এখানে লাইন-বাই-লাইন সংশোধন এবং স্কোর বৃদ্ধি টিপস দেখা যাবে।</p>
+                <p className="text-slate-300 text-xs mb-4">ভুলটির ওপর ক্লিক করলে এখানে Line-by-line সংশোধন এবং স্কোর বৃদ্ধি টিপস দেখা যাবে।</p>
                 
                 {activeCorrectionId !== null ? (
                   <div className="space-y-4 animate-fadeIn">
@@ -1155,8 +1189,8 @@ export default function App() {
               <div className="bg-white p-5 rounded-2xl border border-slate-200 text-slate-800 space-y-3 shadow-md">
                 <p className="text-xs font-bold uppercase text-slate-500 tracking-wider">আমাদের রাইটিং পোর্টালে যা পাচ্ছেন:</p>
                 <div className="space-y-2.5 text-xs text-slate-600">
-                  <p className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-red shrink-0" /> লাইন বাই লাইন ভুল সংশোধন ও সঠিক সমাধান</p>
-                  <p className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-red shrink-0" /> অফিসিয়াল ৪টি ব্যান্ড ক্রাইটেরিয়া আলাদাভাবে স্কোরিং</p>
+                  <p className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-red shrink-0" /> Line-by-line ভুল সংশোধন ও সঠিক সমাধান</p>
+                  <p className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-red shrink-0" /> অফিসিয়াল ৪টি Band ক্রাইটেরিয়া আলাদাভাবে স্কোরিং</p>
                   <p className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-red shrink-0" /> ভোকাবুলারি রিচনেস ও গ্রামার আপগ্রেডেশন চার্ট</p>
                   <p className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-red shrink-0" /> ওয়ান-টু-ওয়ান সরাসরি কনসালটেশন ক্লিয়ারিং ক্লাসেস</p>
                 </div>
@@ -1254,7 +1288,7 @@ export default function App() {
                   <ul className="mt-4 space-y-2.5 text-xs sm:text-sm text-slate-600">
                     <li className="flex items-start gap-2">
                       <span className="text-accent-red font-bold mt-0.5">•</span>
-                      <span>লাইভ ক্লাসের পাশাপাশি আপনার প্রতিটি লেখার ওপর আনুমানিক IELTS ব্যান্ড স্কোরসহ বিস্তারিত সংশোধন ও পিডিএফ রিপোর্ট প্রদান।</span>
+                      <span>লাইভ ক্লাসের পাশাপাশি আপনার প্রতিটি লেখার ওপর আনুমানিক IELTS Band স্কোরসহ বিস্তারিত সংশোধন ও পিডিএফ রিপোর্ট প্রদান।</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-accent-red font-bold mt-0.5">•</span>
@@ -1292,7 +1326,7 @@ export default function App() {
               <div className="flex justify-between items-start">
                 <div>
                   <h4 className="font-bold text-white">নুসরাত জাহান</h4>
-                  <p className="text-[10px] text-slate-400">পরীক্ষার্থী (Academic), ব্যান্ড স্কোর 7.5</p>
+                  <p className="text-[10px] text-slate-400">পরীক্ষার্থী (Academic), Band স্কোর 7.5</p>
                 </div>
                 <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-xs font-bold font-mono">
                   Writing: 7.5
@@ -1304,7 +1338,7 @@ export default function App() {
                 ))}
               </div>
               <p className="text-slate-300 text-xs leading-relaxed italic">
-                "আগে আমার রাইটিং ৭ আসছিল না, কেবল ৬.০ আসার অনেক কারণ স্যার খাতা দেখার পর বুঝতে পেরেছিলাম। স্যার লাইন-বাই-লাইন আমার বাক্যগুলোতে দুর্বল ওয়ার্ড চেঞ্জ দেখিয়ে দিয়েছেন। এটি অত্যন্ত বাস্তবমুখী গাইড।"
+                "আগে আমার রাইটিং ৭ আসছিল না, কেবল ৬.০ আসার অনেক কারণ স্যার খাতা দেখার পর বুঝতে পেরেছিলাম। স্যার Line-by-line আমার বাক্যগুলোতে দুর্বল ওয়ার্ড চেঞ্জ দেখিয়ে দিয়েছেন। এটি অত্যন্ত বাস্তবমুখী গাইড।"
               </p>
             </div>
 
@@ -1313,7 +1347,7 @@ export default function App() {
               <div className="flex justify-between items-start">
                 <div>
                   <h4 className="font-bold text-white">জায়েদ হাসান</h4>
-                  <p className="text-[10px] text-slate-400">পরীক্ষার্থী (General Training), ব্যান্ড স্কোর 7.0</p>
+                  <p className="text-[10px] text-slate-400">পরীক্ষার্থী (General Training), Band স্কোর 7.0</p>
                 </div>
                 <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-xs font-bold font-mono">
                   Writing: 7.0
@@ -1334,7 +1368,7 @@ export default function App() {
               <div className="flex justify-between items-start">
                 <div>
                   <h4 className="font-bold text-white">তাহমিদ চৌধুরী</h4>
-                  <p className="text-[10px] text-slate-400">পরীক্ষার্থী (Academic), ব্যান্ড স্কোর 8.0</p>
+                  <p className="text-[10px] text-slate-400">পরীক্ষার্থী (Academic), Band স্কোর 8.0</p>
                 </div>
                 <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-xs font-bold font-mono">
                   Writing: 8.0
@@ -1365,7 +1399,7 @@ export default function App() {
             <h2 className="text-2xl md:text-4xl font-bold text-navy-primary mt-3">ভর্তি সংক্রান্ত তথ্য ও কোর্স ফি</h2>
             <div className="h-1.5 w-20 bg-accent-red mx-auto mt-4 rounded-full"></div>
             <p className="text-slate-600 mt-4 text-sm md:text-base">
-              আপনার প্রয়োজন এবং বাজেট অনুযায়ী যেকোনো একটি প্ল্যান বেছে নিয়ে আজই আপনার IELTS ব্যান্ড ৭.০+ প্রিপারেশন শুরু করতে পারেন।
+              আপনার প্রয়োজন এবং বাজেট অনুযায়ী যেকোনো একটি প্ল্যান বেছে নিয়ে আজই আপনার IELTS Band ৭.০+ প্রিপারেশন শুরু করতে পারেন।
             </p>
           </div>
 
@@ -1392,7 +1426,7 @@ export default function App() {
                   </li>
                   <li className="flex items-center gap-2.5 font-medium">
                     <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                    <span>১০০+ প্র্যাকটিস শিট এবং ৩৫০+ ব্যান্ড ৯ স্যাম্পল আনসার PDF</span>
+                    <span>১০০+ প্র্যাকটিস শিট এবং ৩৫০+ Band ৯ স্যাম্পল আনসার PDF</span>
                   </li>
                   <li className="flex items-center gap-2.5 font-medium">
                     <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
@@ -1510,7 +1544,7 @@ export default function App() {
               </button>
               {openedFaq === 1 && (
                 <div className="p-5 pt-0 border-t border-slate-50 text-xs md:text-sm text-slate-600 leading-relaxed animate-fadeIn">
-                  যাদের বেসিক ইংলিশ সেন্টেন্স মেকিং বা সাধারণ বাক্য রচনা করতে তেমন সমস্যা নেই কিন্তু আইইএলটিএস রাইটিং-এর ফরম্যাট, চার্ট ডায়াগ্রাম বিশ্লেষণ, থিসিস কন্টেন্ট সাজানো ও সঠিক আইডিয়া ডেভেলপমেন্টে ব্যান্ড স্কোরের দুর্বলতা রয়েছে, তাদের জন্য এই কোর্সটি অত্যন্ত উপযোগী।
+                  যাদের বেসিক ইংলিশ সেন্টেন্স মেকিং বা সাধারণ বাক্য রচনা করতে তেমন সমস্যা নেই কিন্তু IELTS Writing-এর ফরম্যাট, চার্ট ডায়াগ্রাম বিশ্লেষণ, থিসিস কন্টেন্ট সাজানো ও সঠিক আইডিয়া ডেভেলপমেন্টে Band স্কোরের দুর্বলতা রয়েছে, তাদের জন্য এই কোর্সটি অত্যন্ত উপযোগী।
                 </div>
               )}
             </div>
@@ -1526,7 +1560,7 @@ export default function App() {
               </button>
               {openedFaq === 2 && (
                 <div className="p-5 pt-0 border-t border-slate-50 text-xs md:text-sm text-slate-600 leading-relaxed animate-fadeIn">
-                  আমাদের নির্দিষ্ট ডেডিকেটেড লার্নিং পোর্টালে (LMS) আপনি আপনার লেখা খাতাটি ছবি তুলে অথবা মাইক্রোসফট ওয়ার্ড ফরম্যাটে জমা দিতে পারবেন। মেন্টর বা ট্রেইনার প্রতিটি স্ক্রিপ্ট লাইন-বাই-লাইন চেক করে পুঙ্খানুপুঙ্খ ব্যাকরণগত ভুল, ভোকাবুলারি ইমপ্রুভমেন্টের জায়গা এবং সম্ভাব্য ব্যান্ড স্কোরসহ নির্ভুল ফিডব্যাক ফাইল আকারে প্রদান করবেন।
+                  আমাদের নির্দিষ্ট ডেডিকেটেড লার্নিং পোর্টালে (LMS) আপনি আপনার লেখা খাতাটি ছবি তুলে অথবা মাইক্রোসফট ওয়ার্ড ফরম্যাটে জমা দিতে পারবেন। মেন্টর বা ট্রেইনার প্রতিটি স্ক্রিপ্ট Line-by-line চেক করে পুঙ্খানুপুঙ্খ ব্যাকরণগত ভুল, ভোকাবুলারি ইমপ্রুভমেন্টের জায়গা এবং সম্ভাব্য Band স্কোরসহ নির্ভুল ফিডব্যাক ফাইল আকারে প্রদান করবেন।
                 </div>
               )}
             </div>
@@ -1558,7 +1592,7 @@ export default function App() {
               </button>
               {openedFaq === 4 && (
                 <div className="p-5 pt-0 border-t border-slate-50 text-xs md:text-sm text-slate-600 leading-relaxed animate-fadeIn">
-                  হ্যাঁ, কোর্সে জয়েন করার সাথে সাথেই আপনি পূর্ববর্তী ক্লাসের স্টাডি ম্যাটেরিয়ালস, ভোকাবুলারি পিডিফ, স্যাম্পল রিসোর্স মডিউল ও ৩৫০+ ব্যান্ড ৯ এর সলিউশন ব্যাংক অ্যাক্সেস করতে পারবেন।
+                  হ্যাঁ, কোর্সে জয়েন করার সাথে সাথেই আপনি পূর্ববর্তী ক্লাসের স্টাডি ম্যাটেরিয়ালস, ভোকাবুলারি পিডিফ, স্যাম্পল রিসোর্স মডিউল ও ৩৫০+ Band ৯ এর সলিউশন ব্যাংক অ্যাক্সেস করতে পারবেন।
                 </div>
               )}
             </div>
