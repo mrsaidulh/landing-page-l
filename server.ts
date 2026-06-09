@@ -46,7 +46,7 @@ function isCookieCheckPage(text: string): boolean {
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = parseInt(process.env.PORT || "3000", 10);
 
   // Middleware for parsing body
   app.use(express.json());
