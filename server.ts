@@ -64,11 +64,6 @@ async function startServer() {
         email: email || "",
         phone: phone || "",
         
-        // Multi-case CRM compatibility
-        userId: uid || "ielts_crm_main_user",
-        user_id: uid || "ielts_crm_main_user",
-        uid: uid || "ielts_crm_main_user",
-        
         source: "Website Form",
         lead_source: "Website Form",
         
@@ -315,16 +310,11 @@ async function startServer() {
           email: email || "",
           phone: phone,
           
-          // Multi-case CRM compatibility
-          userId: uid || "ielts_crm_main_user",
-          user_id: uid || "ielts_crm_main_user",
-          uid: uid || "ielts_crm_main_user",
-          
           source: "Website Landing Page (OTP Verified)",
           lead_source: "Website Landing Page (OTP Verified)",
           
-          status: "Verified Lead",
-          lead_status: "Verified Lead",
+          status: "New Lead",
+          lead_status: "New Lead",
           
           course: course || "",
           targetCourse: course || "",
