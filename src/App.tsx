@@ -486,7 +486,7 @@ export default function App() {
               <Sparkles className="w-3 h-3 text-accent-gold" /> IELTS Writing Dedicated Batch
             </span>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-sans tracking-tight">
-              IELTS Writing-এ <span className="text-accent-gold">Band ৭.০+</span> পাওয়ার বাস্তবমুখী গাইডলাইন
+              IELTS Writing-এ <span className="text-accent-gold">Band 7.0+</span> পাওয়ার বাস্তবমুখী গাইডলাইন
             </h1>
             <p className="text-slate-300 text-base md:text-lg max-w-2xl leading-relaxed">
               অনেকেরই লিসেনিং বা রিডিং-এ ভালো স্কোর আসলেও রাইটিং মডিউলে এসে আটকে যান। সঠিক গ্রামার, রিচ ভোকাবুলারি এবং লজিক্যাল আইডিয়া ডেভেলপমেন্টের অভাব দূর করতেই আমাদের এই ডেডিকেটেড রাইটিং কোর্স।
@@ -525,14 +525,7 @@ export default function App() {
               </a>
             </div>
 
-            {/* Trust Badges */}
-            <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-slate-400">
-              <span className="flex items-center gap-1">🥇 British Council Trained Trainers</span>
-              <span>•</span>
-              <span>Interactive Practice Dashboard</span>
-              <span>•</span>
-              <span>1-on-1 Corrective Feedback</span>
-            </div>
+
           </div>
 
           {/* Hero Form Right */}
@@ -826,7 +819,7 @@ export default function App() {
             <span className="text-accent-gold font-bold text-xs uppercase tracking-widest bg-accent-gold/10 px-3 py-1 rounded-full border border-accent-gold/20 flex items-center gap-1 w-max mx-auto">
               <Zap className="w-3 h-3 text-accent-gold" /> Practice & Upgrade Simulator
             </span>
-            <h2 className="text-2xl md:text-4xl font-bold">IELTS Writing Upgrader (Band 5.5 vs 7.5+)</h2>
+            <h2 className="text-2xl md:text-4xl font-bold">IELTS Writing Upgrader</h2>
             <p className="text-slate-300 text-sm md:text-base">
               নিচে যেকোনো একটি মডিউল বা টপিক সিলেক্ট করে দেখুন কিভাবে সাধারণ বাক্যগুলোকে প্রফেশনাল এবং হাই-স্কোরিং রাইটিং-এ পরিবর্তন করা যায়।
             </p>
@@ -1325,8 +1318,8 @@ export default function App() {
             <div className="bg-navy-secondary p-6 rounded-2xl border border-white/5 space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-bold text-white">নুসরাত জাহান</h4>
-                  <p className="text-[10px] text-slate-400">পরীক্ষার্থী (Academic), Band স্কোর 7.5</p>
+                  <h4 className="font-bold text-white">Nusrat Jahan</h4>
+                  <p className="text-[10px] text-slate-400">Candidate (Academic), Band Score 7.5</p>
                 </div>
                 <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-xs font-bold font-mono">
                   Writing: 7.5
@@ -1338,7 +1331,7 @@ export default function App() {
                 ))}
               </div>
               <p className="text-slate-300 text-xs leading-relaxed italic">
-                "আগে আমার রাইটিং ৭ আসছিল না, কেবল ৬.০ আসার অনেক কারণ স্যার খাতা দেখার পর বুঝতে পেরেছিলাম। স্যার Line-by-line আমার বাক্যগুলোতে দুর্বল ওয়ার্ড চেঞ্জ দেখিয়ে দিয়েছেন। এটি অত্যন্ত বাস্তবমুখী গাইড।"
+                "I was previously stuck at a 6.0 in writing and couldn't reach 7.0. After the trainer evaluated my scripts, I understood my mistakes. He showed me line-by-line how to replace weak vocabulary and upgrade my sentence structures. This is a highly practical guideline!"
               </p>
             </div>
 
@@ -1346,8 +1339,8 @@ export default function App() {
             <div className="bg-navy-secondary p-6 rounded-2xl border border-white/5 space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-bold text-white">জায়েদ হাসান</h4>
-                  <p className="text-[10px] text-slate-400">পরীক্ষার্থী (General Training), Band স্কোর 7.0</p>
+                  <h4 className="font-bold text-white">Zayed Hasan</h4>
+                  <p className="text-[10px] text-slate-400">Candidate (General Training), Band Score 7.0</p>
                 </div>
                 <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-xs font-bold font-mono">
                   Writing: 7.0
@@ -1359,7 +1352,7 @@ export default function App() {
                 ))}
               </div>
               <p className="text-slate-300 text-xs leading-relaxed italic">
-                "লেটার টাইপিং নিয়ে আমি খুব চিন্তিত ছিলাম। স্যাম্পল মডিউলের যে থিসিস সেন্টেন্স প্যাটার্ন দেয়া হয়েছিল তা অনেক উপকারে এসেছে। সরাসরি ওয়ান টু ওয়ান ক্লাসগুলোর ইভ্যালুয়েশন ছিল মাস্টারক্লাস।"
+                "I was extremely worried about GT letter writing. The thesis templates and sentence patterns provided in the official materials helped me immensely. The 1-on-1 trainer feedback sessions were absolute masterclasses."
               </p>
             </div>
 
@@ -1367,8 +1360,8 @@ export default function App() {
             <div className="bg-navy-secondary p-6 rounded-2xl border border-white/5 space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-bold text-white">তাহমিদ চৌধুরী</h4>
-                  <p className="text-[10px] text-slate-400">পরীক্ষার্থী (Academic), Band স্কোর 8.0</p>
+                  <h4 className="font-bold text-white">Tahmid Chowdhury</h4>
+                  <p className="text-[10px] text-slate-400">Candidate (Academic), Band Score 8.0</p>
                 </div>
                 <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-xs font-bold font-mono">
                   Writing: 8.0
@@ -1380,7 +1373,7 @@ export default function App() {
                 ))}
               </div>
               <p className="text-slate-300 text-xs leading-relaxed italic">
-                "গ্রামার এবং কমপ্লেক্স স্ট্রাকচার বৈচিত্র্যের অভাব মেটাতে আইইএলটিএস রিভোলিউশন চমৎকার হেল্প করবে। যারা রাইটিং টেনশনে ভুগছেন তাদের চোখ বন্ধ করে এই কোর্সে জয়েন করা উচিত।"
+                "To overcome Grammatical Range and Accuracy weaknesses, IELTS Revolution is an excellent choice. If you are struggling with writing anxiety, you should join this course without a second thought."
               </p>
             </div>
 
@@ -1403,55 +1396,10 @@ export default function App() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
+          <div className="max-w-md mx-auto">
             
-            {/* Standard Plan: Self Study */}
-            <div className="bg-bg-light p-8 rounded-2xl border-2 border-slate-200 flex flex-col justify-between hover:border-navy-secondary transition duration-300 shadow-md">
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <h4 className="text-base font-bold text-slate-500 uppercase tracking-widest">Self-Study Pack</h4>
-                  <div className="flex items-baseline mt-2">
-                    <span className="text-4xl md:text-5xl font-extrabold text-navy-primary">৳ ২,৫০০</span>
-                    <span className="text-slate-500 ml-2 font-medium text-xs">/ এককালীন</span>
-                  </div>
-                  <p className="text-slate-500 text-xs">নিজের সুবিধাজনক সময়ে ঘরে বসেই প্রফেশনাল প্রস্তুতি।</p>
-                </div>
-
-                <div className="h-px bg-slate-200"></div>
-
-                <ul className="space-y-4 text-slate-700 text-xs sm:text-sm">
-                  <li className="flex items-center gap-2.5 font-medium">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                    <span>১৬+ ফুল প্রি-রেকর্ডেড লেকচার ভিডিও লাইব্রেরি</span>
-                  </li>
-                  <li className="flex items-center gap-2.5 font-medium">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                    <span>১০০+ প্র্যাকটিস শিট এবং ৩৫০+ Band ৯ স্যাম্পল আনসার PDF</span>
-                  </li>
-                  <li className="flex items-center gap-2.5 font-medium">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                    <span>৫টি কমপ্লিট রাইটিং স্ক্রিপ্ট ওয়ান-টু-ওয়ান ইভ্যালুয়েশন রিপোর্ট</span>
-                  </li>
-                  <li className="flex items-center gap-2.5 font-medium">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                    <span>২ মাসের সম্পূর্ণ ডেডিকেটেড এলএমএস পোর্টাল অ্যাক্সেস</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="mt-8 pt-4">
-                <button 
-                  onClick={() => openPayment("Self-Study Pack", "৳ ২,৫০০", "self-study")}
-                  className="w-full bg-navy-secondary hover:bg-navy-primary text-white py-3.5 rounded-lg font-bold text-sm tracking-wide transition-all shadow duration-200"
-                  id="enroll-btn-self-study"
-                >
-                  এই প্ল্যানে ভর্তি হোন ➔
-                </button>
-              </div>
-            </div>
-
             {/* Live Premium Plan */}
-            <div className="bg-white p-8 rounded-2xl border-2 border-accent-red relative flex flex-col justify-between shadow-xl scale-[1.01]">
+            <div className="bg-white p-8 rounded-2xl border-2 border-accent-red relative flex flex-col justify-between shadow-xl">
               <span className="absolute -top-3.5 right-6 bg-accent-red text-white text-xs px-4 py-1.5 rounded-full font-extrabold uppercase tracking-widest shadow flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5 text-accent-gold" /> Popular Choice
               </span>
@@ -1462,7 +1410,7 @@ export default function App() {
                      Premium Live Batch
                   </h4>
                   <div className="flex items-baseline mt-2 font-sans">
-                    <span className="text-4xl md:text-5xl font-extrabold text-navy-primary">৳ ৫,০০০</span>
+                    <span className="text-4xl md:text-5xl font-extrabold text-navy-primary">৳ ২,৯৯৯</span>
                     <span className="text-slate-500 ml-2 font-medium text-xs">/ এককালীন</span>
                   </div>
                   <p className="text-slate-500 text-xs">সহজ সরাসরি ক্লাস ও ট্রেইনারদের জুম মেন্টরিং সেশন।</p>
@@ -1496,7 +1444,7 @@ export default function App() {
 
               <div className="mt-8 pt-4">
                 <button 
-                  onClick={() => openPayment("Premium Live Batch", "৳ ৫,০০০", "live-premium")}
+                  onClick={() => openPayment("Premium Live Batch", "৳ ২,৯৯৯", "live-premium")}
                   className="w-full bg-accent-red hover:bg-neutral-950 text-white py-3.5 rounded-lg font-bold text-sm tracking-wide transition-all shadow duration-200"
                   id="enroll-btn-live-premium"
                 >
@@ -1507,12 +1455,33 @@ export default function App() {
 
           </div>
 
-          <div className="max-w-2xl mx-auto mt-12 bg-slate-50 border border-slate-200 rounded-xl p-5 text-center">
-            <p className="text-xs text-slate-500">
-               ভর্তি বা পেমেন্ট সংক্রান্ত কোনো প্রশ্ন রয়েছে? সরাসরি কল করুন এবং ফ্রি কথা বলুন: <br />
-              <span className="text-navy-primary font-bold text-sm md:text-base flex justify-center items-center gap-1.5 mt-2">
-                📞 +৮৮০ ১৭০০-০০০০০০ (সকাল ১০টা থেকে রাত ১০টা)
-              </span>
+          <div className="max-w-2xl mx-auto mt-12 bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
+            <p className="text-sm text-slate-600 font-medium">
+              ভর্তি বা পেমেন্ট সংক্রান্ত কোনো প্রশ্ন রয়েছে? সরাসরি হোয়াটসঅ্যাপ করুন অথবা কল করুন:
+            </p>
+            <div className="mt-4 flex flex-col sm:flex-row justify-center items-center gap-3">
+              <a 
+                href="https://wa.me/8801340861314" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white px-5 py-2.5 rounded-lg font-bold text-sm md:text-base transition duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
+              >
+                <svg className="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.704 1.459h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+                <span>WhatsApp মেসেজ</span>
+              </a>
+              
+              <a 
+                href="tel:01340861314" 
+                className="inline-flex items-center gap-2 bg-navy-secondary hover:bg-navy-primary text-white px-5 py-2.5 rounded-lg font-bold text-sm md:text-base transition duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
+              >
+                <Phone className="w-4 h-4 text-white shrink-0" />
+                <span>সরাসরি কল: 01340861314</span>
+              </a>
+            </div>
+            <p className="text-[11px] text-slate-400 mt-3">
+              (সকাল ১০টা থেকে রাত ১০টা পর্যন্ত যেকোনো সময়ে সরাসরি কল বা মেসেজ করুন)
             </p>
           </div>
 
