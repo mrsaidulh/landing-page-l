@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-navy-primary: #0B132B;
+  --color-navy-secondary: #1C2541;
+  --color-accent-red: #D62246;
+  --color-accent-gold: #EAB308;
+  --color-bg-light: #F8FAFC;
+
+  --font-sans: 'Inter', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
+}

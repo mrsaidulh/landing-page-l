@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Remix: IELTS Writing Masterclass",
+  "description": "IELTS Writing Dedicated Course Masterclass Landing Page - IELTS Revolution.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
