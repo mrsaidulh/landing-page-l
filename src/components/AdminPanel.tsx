@@ -16,7 +16,10 @@ import {
   Filter, 
   FileSpreadsheet, 
   PhoneCall, 
-  ArrowRightLeft 
+  ArrowRightLeft,
+  Plus,
+  Trash2,
+  Edit
 } from 'lucide-react';
 
 interface PaymentRecord {
@@ -29,6 +32,7 @@ interface PaymentRecord {
   planPrice: string;
   timestamp: string;
   status: 'pending' | 'approved' | 'declined';
+  nameBangla?: string;
 }
 
 interface AdminPanelProps {
@@ -52,6 +56,52 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'declined'>('all');
   const [isUpdatingId, setIsUpdatingId] = useState<string | null>(null);
 
+  // New CRUD States
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<PaymentRecord | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+
+  // Form Fields State
+  const [formName, setFormName] = useState('');
+  const [formNameBangla, setFormNameBangla] = useState('');
+  const [formEmail, setFormEmail] = useState('');
+  const [formPhone, setFormPhone] = useState('');
+  const [formTransactionId, setFormTransactionId] = useState('');
+  const [formPlanName, setFormPlanName] = useState('Premium Live Batch');
+  const [formPlanPrice, setFormPlanPrice] = useState('৳ 2,999');
+  const [formStatus, setFormStatus] = useState<'pending' | 'approved' | 'declined'>('pending');
+
+  const resetForm = () => {
+    setFormName('');
+    setFormNameBangla('');
+    setFormEmail('');
+    setFormPhone('');
+    setFormTransactionId('');
+    setFormPlanName('Premium Live Batch');
+    setFormPlanPrice('৳ 2,999');
+    setFormStatus('pending');
+  };
+
+  const openAddModal = () => {
+    resetForm();
+    setShowAddModal(true);
+  };
+
+  const openEditModal = (p: PaymentRecord) => {
+    setFormName(p.studentName);
+    setFormNameBangla(p.nameBangla || '');
+    setFormEmail(p.studentEmail || '');
+    setFormPhone(p.phone);
+    setFormTransactionId(p.transactionId);
+    setFormPlanName(p.planName);
+    setFormPlanPrice(p.planPrice);
+    setFormStatus(p.status);
+    setEditingRecord(p);
+    setShowEditModal(true);
+  };
+
   // Load token from local storage on mount
   useEffect(() => {
     const savedToken = localStorage.getItem('ielts_admin_token');
@@ -65,7 +115,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim() || !password.trim()) {
-      setLoginError('ইউজারনেম এবং পাসওয়ার্ড প্রদান করুন।');
+      setLoginError('Please enter username and password.');
       return;
     }
 
@@ -88,11 +138,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
         setIsLoggedIn(true);
         fetchPayments(data.token);
       } else {
-        setLoginError(data.error || 'ইউজারনেম বা পাসওয়ার্ড সঠিক নয়!');
+        setLoginError(data.error || 'Invalid username or password!');
       }
     } catch (err) {
       console.error('Login request failed:', err);
-      setLoginError('সার্ভারের সাথে সংযোগ স্থাপন করা যায়নি। আবার চেষ্টা করুন।');
+      setLoginError('Failed to connect to server. Please try again.');
     } finally {
       setIsLoggingIn(false);
     }
@@ -121,14 +171,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
       if (res.ok && data.success) {
         setPayments(data.payments || []);
       } else {
-        setApiError(data.error || 'পেমেন্ট তালিকা লোড করা যায়নি।');
+        setApiError(data.error || 'Failed to load payments list.');
         if (res.status === 401) {
           handleLogout();
         }
       }
     } catch (err) {
       console.error('Fetch payments failed:', err);
-      setApiError('পেমেন্ট তালিকা নিয়ে আসতে সমস্যা হয়েছে। পেজ রিফ্রেশ করুন।');
+      setApiError('Unable to retrieve payment list. Please refresh the page.');
     } finally {
       setIsLoading(false);
     }
@@ -153,13 +203,124 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
         // Update local status matching the record
         setPayments(prev => prev.map(p => p.id === id ? { ...p, status: newStatus } : p));
       } else {
-        alert(data.error || 'স্ট্যাটাস আপডেট করা সম্ভব হয়নি।');
+        alert(data.error || 'Status update failed.');
       }
     } catch (err) {
       console.error('Update status failed:', err);
-      alert('সার্ভারের সাথে সংযোগ বিচ্ছিন্ন হয়েছে।');
+      alert('Disconnected from server.');
     } finally {
       setIsUpdatingId(null);
+    }
+  };
+
+  const handleCreatePayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formPhone.trim() || !formTransactionId.trim()) {
+      alert('Phone number and transaction ID are required.');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/admin/create-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          studentName: formName,
+          nameBangla: formNameBangla,
+          studentEmail: formEmail,
+          phone: formPhone,
+          transactionId: formTransactionId,
+          planName: formPlanName,
+          planPrice: formPlanPrice,
+          status: formStatus
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setPayments(prev => [data.payment, ...prev]);
+        setShowAddModal(false);
+        resetForm();
+      } else {
+        alert(data.error || 'Unable to create payment record.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to connect to server.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleUpdatePayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingRecord) return;
+    if (!formPhone.trim() || !formTransactionId.trim()) {
+      alert('Phone number and transaction ID are required.');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/admin/update-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          id: editingRecord.id,
+          studentName: formName,
+          nameBangla: formNameBangla,
+          studentEmail: formEmail,
+          phone: formPhone,
+          transactionId: formTransactionId,
+          planName: formPlanName,
+          planPrice: formPlanPrice,
+          status: formStatus
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setPayments(prev => prev.map(p => p.id === editingRecord.id ? data.payment : p));
+        setShowEditModal(false);
+        setEditingRecord(null);
+        resetForm();
+      } else {
+        alert(data.error || 'Unable to update payment record.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to connect to server.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDeletePayment = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this payment record? This action cannot be undone.')) return;
+    setIsDeletingId(id);
+    try {
+      const res = await fetch('/api/admin/delete-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setPayments(prev => prev.filter(p => p.id !== id));
+      } else {
+        alert(data.error || 'Unable to delete payment record.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Disconnected from server.');
+    } finally {
+      setIsDeletingId(null);
     }
   };
 
@@ -233,7 +394,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
             <h1 className="text-lg md:text-xl font-bold tracking-tight text-white flex items-center gap-2">
               IELTS Revolution <span className="text-red-500 text-xs px-2 py-0.5 bg-red-500/10 rounded border border-red-500/20">Admin Base</span>
             </h1>
-            <p className="text-xs text-slate-400">ভর্তি ও পেমেন্ট রিকোয়েস্ট যাচাইকরণ উইন্ডো</p>
+            <p className="text-xs text-slate-400">Enrollment & Payment Verification Window</p>
           </div>
         </div>
         
@@ -243,7 +404,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
             className="flex items-center gap-1 px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900 text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            ল্যান্ডিং পেজে ফিরুন
+            Back to Landing Page
           </button>
           {isLoggedIn && (
             <button 
@@ -251,7 +412,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               className="flex items-center gap-1 px-3.5 py-1.5 rounded-lg bg-rose-600/15 text-rose-400 hover:bg-rose-600 hover:text-white border border-rose-500/20 text-xs font-medium transition cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
-              লগআউট
+              Logout
             </button>
           )}
         </div>
@@ -268,8 +429,22 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 <div className="inline-flex p-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 mb-2">
                   <Lock className="w-6 h-6" />
                 </div>
-                <h2 className="text-xl font-extrabold text-white">অ্যাডমিন লগইন পোর্টাল</h2>
-                <p className="text-xs text-slate-400">পেমেন্ট অনুমোদন করতে অনুগ্রহ করে লগইন করুন</p>
+                <h2 className="text-xl font-extrabold text-white">Admin Login Portal</h2>
+                <p className="text-xs text-slate-400">Please login to verify and approve payments</p>
+                
+                {/* Auto Fill Quick Button */}
+                <div className="pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUsername('admin');
+                      setPassword('admin123');
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-200 bg-slate-800 hover:bg-slate-700 active:scale-95 transition-all text-center cursor-pointer"
+                  >
+                    ⚡ Auto-fill Login Info (admin / admin123)
+                  </button>
+                </div>
               </div>
 
               {loginError && (
@@ -281,7 +456,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-300">ইউজারনেম (Username)</label>
+                  <label className="block text-xs font-bold text-slate-300">Username</label>
                   <div className="relative">
                     <span className="absolute left-3 top-3 text-slate-500">
                       <User className="w-4 h-4" />
@@ -289,7 +464,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                     <input 
                       type="text"
                       className="w-full pl-9 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-red-500 transition-all font-mono"
-                      placeholder="Username লিখুন"
+                      placeholder="Enter Username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                     />
@@ -297,7 +472,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-300">পাসওয়ার্ড (Password)</label>
+                  <label className="block text-xs font-bold text-slate-300">Password</label>
                   <div className="relative">
                     <span className="absolute left-3 top-3 text-slate-500">
                       <Lock className="w-4 h-4" />
@@ -305,7 +480,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                     <input 
                       type={showPassword ? "text" : "password"}
                       className="w-full pl-9 pr-10 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-red-500 transition-all font-mono"
-                      placeholder="Password লিখুন"
+                      placeholder="Enter Password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
@@ -327,16 +502,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   {isLoggingIn ? (
                     <>
                       <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>তথ্য যাচাই করা হচ্ছে...</span>
+                      <span>Verifying credentials...</span>
                     </>
                   ) : (
-                    <span>লগইন করুন ➔</span>
+                    <span>Login ➔</span>
                   )}
                 </button>
               </form>
 
-              <div className="mt-8 border-t border-slate-800 pt-4 text-center">
-                <span className="text-[10px] text-slate-500 font-mono">Default credentials listed in .env.example file. (administrator / Maailulp1$%)</span>
+              <div className="mt-8 border-t border-slate-800 pt-4 text-center space-y-1">
+                <p className="text-[10px] text-slate-400 font-medium">Quick Login: admin / admin123</p>
+                <p className="text-[9px] text-slate-500 font-mono">Environment Credentials: administrator / Maailulp1$%</p>
               </div>
             </div>
           </div>
@@ -350,7 +526,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 md:p-5 flex flex-col justify-between">
                 <span className="text-slate-400 text-xs font-semibold">Total Revenue (Approved)</span>
                 <div className="flex items-baseline mt-2 gap-1 flex-wrap">
-                  <span className="text-2xl md:text-3xl font-extrabold text-amber-500 font-sans">৳ {approvedRevenue.toLocaleString('bn-BD')}</span>
+                  <span className="text-2xl md:text-3xl font-extrabold text-amber-500 font-sans">৳ {approvedRevenue.toLocaleString('en-US')}</span>
                 </div>
                 <span className="text-[10px] text-emerald-500 font-bold mt-1">✓ {approvedCount} Payments Verified</span>
               </div>
@@ -391,7 +567,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 </span>
                 <input 
                   type="text"
-                  placeholder="নাম, মোবাইল নম্বর বা TrxID দিয়ে সার্চ করুন..."
+                  placeholder="Search by name, phone or TrxID..."
                   className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-red-500 transition-all"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -402,7 +578,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
                 <span className="text-xs text-slate-400 font-semibold mr-1 flex items-center gap-1">
                   <Filter className="w-3.5 h-3.5" />
-                  ফিল্টার স্ট্যাটাস:
+                  Filter Status:
                 </span>
                 
                 <button
@@ -449,11 +625,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   Refused ({declinedCount})
                 </button>
 
+                <button
+                  onClick={openAddModal}
+                  className="px-3 py-1.5 bg-red-600 hover:bg-red-550 text-white text-xs font-bold rounded-lg transition active:scale-95 flex items-center gap-1 cursor-pointer"
+                  title="Add new payment record manually"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  New Payment
+                </button>
+
                 <button 
                   onClick={() => fetchPayments()}
                   disabled={isLoading}
                   className="p-2 bg-slate-900 text-slate-400 hover:text-slate-200 rounded-lg border border-slate-800 transition active:scale-95 disabled:opacity-50"
-                  title="তালিকা রিফ্রেশ করুন"
+                  title="Refresh list"
                 >
                   <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin text-red-500' : ''}`} />
                 </button>
@@ -473,14 +658,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
             {isLoading && payments.length === 0 ? (
               <div className="text-center py-20 bg-slate-950 border border-slate-800 rounded-3xl space-y-3">
                 <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p className="text-sm text-slate-400 font-medium">পেমেন্ট তালিকা লোড করা হচ্ছে...</p>
+                <p className="text-sm text-slate-400 font-medium">Loading payments list...</p>
               </div>
             ) : filteredPayments.length === 0 ? (
               <div className="text-center py-20 bg-slate-950 border border-slate-800 rounded-3xl">
                 <Filter className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-                <h4 className="text-base font-bold text-slate-300">কোনো পেমেন্ট তথ্য পাওয়া যায়নি</h4>
+                <h4 className="text-base font-bold text-slate-300">No payment details found</h4>
                 <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-                  আপনার সিলেক্ট করা ফিল্টারের অধীনে কোনো পেমেন্ট রেকর্ড নেই অথবা সার্চ কুয়েরি মেলেনি।
+                  There are no payment records under the selected filter or no search query matched.
                 </p>
               </div>
             ) : (
@@ -491,13 +676,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   <table className="w-full text-left text-xs border-collapse">
                     <thead className="bg-slate-900 border-b border-slate-800 text-slate-400 uppercase font-bold text-[10px] tracking-wider">
                       <tr>
-                        <th className="px-5 py-4">সময় (Date)</th>
-                        <th className="px-5 py-4">শিক্ষার্থী বিবরণী (Student info)</th>
-                        <th className="px-5 py-4">কোর্স বিবরণী (Selected Plan)</th>
-                        <th className="px-5 py-4">পেমেন্টকৃত নাম্বার (Sender Phone)</th>
-                        <th className="px-5 py-4">ট্রানজেকশন আইডি (TrxID)</th>
-                        <th className="px-5 py-4 text-center">স্ট্যাটাস (Status)</th>
-                        <th className="px-5 py-4 text-right">পদক্ষেপ (Actions)</th>
+                        <th className="px-5 py-4">Date</th>
+                        <th className="px-5 py-4">Student Info</th>
+                        <th className="px-5 py-4">Selected Plan</th>
+                        <th className="px-5 py-4">Sender Phone</th>
+                        <th className="px-5 py-4">TrxID</th>
+                        <th className="px-5 py-4 text-center">Status</th>
+                        <th className="px-5 py-4 text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800 text-slate-300">
@@ -507,14 +692,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                           {/* Date timestamp */}
                           <td className="px-5 py-4 whitespace-nowrap">
                             <div className="font-semibold text-slate-300">
-                              {new Date(p.timestamp).toLocaleDateString('bn-BD', {
+                              {new Date(p.timestamp).toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',
                               })}
                             </div>
                             <div className="text-[10px] text-slate-500 font-mono mt-1">
-                              {new Date(p.timestamp).toLocaleTimeString('bn-BD', {
+                              {new Date(p.timestamp).toLocaleTimeString('en-US', {
                                 hour: '2-digit',
                                 minute: '2-digit',
                                 hour12: true
@@ -569,7 +754,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                                   <button 
                                     onClick={() => handleStatusChange(p.id, 'approved')}
                                     className="px-2.5 py-1.5 bg-emerald-600/10 text-emerald-400 hover:bg-emerald-600 hover:text-white text-xs font-bold rounded-lg border border-emerald-500/20 transition cursor-pointer"
-                                    title="পেমেন্ট অনুমোদন করুন"
+                                    title="Approve payment"
                                   >
                                     Approve ✅
                                   </button>
@@ -578,7 +763,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                                   <button 
                                     onClick={() => handleStatusChange(p.id, 'declined')}
                                     className="px-2.5 py-1.5 bg-rose-600/10 text-rose-400 hover:bg-rose-600 hover:text-white text-xs font-bold rounded-lg border border-rose-500/20 transition cursor-pointer"
-                                    title="রিজেক্ট করুন"
+                                    title="Reject payment"
                                   >
                                     Reject ❌
                                   </button>
@@ -587,9 +772,30 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                                   <button 
                                     onClick={() => handleStatusChange(p.id, 'pending')}
                                     className="p-1 px-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 text-[10px] font-semibold rounded border border-slate-800 transition cursor-pointer"
-                                    title="পেন্ডিং করুন"
+                                    title="Mark pending"
                                   >
                                     Mark Pending
+                                  </button>
+                                )}
+
+                                {/* Complete Edit and Delete controls */}
+                                <button 
+                                  onClick={() => openEditModal(p)}
+                                  className="p-1.5 bg-slate-800 hover:bg-blue-600 hover:text-white text-slate-400 rounded-lg border border-slate-700 transition cursor-pointer"
+                                  title="Edit record"
+                                >
+                                  <Edit className="w-3.5 h-3.5" />
+                                </button>
+
+                                {isDeletingId === p.id ? (
+                                  <div className="w-4 h-4 border-2 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+                                ) : (
+                                  <button 
+                                    onClick={() => handleDeletePayment(p.id)}
+                                    className="p-1.5 bg-slate-800 hover:bg-rose-600 hover:text-white text-slate-500 hover:text-white rounded-lg border border-slate-700 transition cursor-pointer"
+                                    title="Delete record"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
                                   </button>
                                 )}
                               </div>
@@ -609,7 +815,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="text-[10px] text-slate-500 font-semibold font-mono">
-                            {new Date(p.timestamp).toLocaleDateString('bn-BD', { year: 'numeric', month: 'short', day: 'numeric' })} • {new Date(p.timestamp).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' })}
+                            {new Date(p.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })} • {new Date(p.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                           </div>
                           <h4 className="text-base font-bold text-white mt-1">{p.studentName}</h4>
                           <span className="text-xs text-slate-500">{p.studentEmail}</span>
@@ -621,39 +827,59 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
                       <div className="grid grid-cols-2 gap-3 text-xs">
                         <div>
-                          <span className="text-slate-500 block">কোর্স (Plan)</span>
+                          <span className="text-slate-500 block">Plan</span>
                           <span className="text-slate-300 font-bold">{p.planName}</span>
                         </div>
                         <div>
-                          <span className="text-slate-500 block">টাকা (Price)</span>
+                          <span className="text-slate-500 block">Price</span>
                           <span className="text-amber-500 font-extrabold font-sans">{p.planPrice}</span>
                         </div>
                         <div>
-                          <span className="text-slate-500 block">মোবাইল নম্বর (Sender)</span>
+                          <span className="text-slate-500 block">Sender Phone</span>
                           <a href={`tel:${p.phone}`} className="text-slate-300 font-mono flex items-center gap-1 hover:underline">
                             <PhoneCall className="w-3 h-3 text-slate-500" />
                             {p.phone}
                           </a>
                         </div>
                         <div>
-                          <span className="text-slate-500 block">ট্রানজেকশন (TrxID)</span>
+                          <span className="text-slate-500 block">TrxID</span>
                           <span className="text-red-400 font-extrabold font-mono select-all uppercase">{p.transactionId}</span>
                         </div>
                       </div>
 
                       <div className="h-px bg-slate-900"></div>
 
-                      <div className="flex justify-between items-center gap-2">
-                        <span className="text-[10px] text-slate-500 font-mono">ID: {p.id}</span>
+                      <div className="flex justify-between items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[10px] text-slate-500 font-mono">ID: {p.id}</span>
+                          <button 
+                            onClick={() => openEditModal(p)}
+                            className="p-1.5 bg-slate-900 border border-slate-800 hover:bg-blue-600 hover:text-white text-slate-400 rounded transition text-xs flex items-center gap-1 cursor-pointer"
+                            title="Edit record"
+                          >
+                            <Edit className="w-3 h-3" />
+                          </button>
+                          {isDeletingId === p.id ? (
+                            <div className="w-4 h-4 border-2 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+                          ) : (
+                            <button 
+                              onClick={() => handleDeletePayment(p.id)}
+                              className="p-1.5 bg-slate-900 border border-slate-800 hover:bg-rose-600 hover:text-white text-slate-500 hover:text-white rounded transition text-xs flex items-center gap-1 cursor-pointer"
+                              title="Delete record"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
                         
                         {isUpdatingId === p.id ? (
                           <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
                         ) : (
-                          <div className="flex gap-1.5">
+                          <div className="flex gap-1">
                             {p.status !== 'approved' && (
                               <button 
                                 onClick={() => handleStatusChange(p.id, 'approved')}
-                                className="px-2.5 py-1.5 bg-emerald-600/10 text-emerald-400 hover:bg-emerald-600 hover:text-white text-[11px] font-bold rounded-lg border border-emerald-500/20 cursor-pointer"
+                                className="px-2 py-1 bg-emerald-600/10 text-emerald-400 hover:bg-emerald-600 hover:text-white text-[11px] font-bold rounded border border-emerald-500/20 cursor-pointer"
                               >
                                 Approve ✓
                               </button>
@@ -661,7 +887,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                             {p.status !== 'declined' && (
                               <button 
                                 onClick={() => handleStatusChange(p.id, 'declined')}
-                                className="px-2.5 py-1.5 bg-rose-600/10 text-rose-400 hover:bg-rose-600 hover:text-white text-[11px] font-bold rounded-lg border border-rose-500/20 cursor-pointer"
+                                className="px-2 py-1 bg-rose-600/10 text-rose-400 hover:bg-rose-600 hover:text-white text-[11px] font-bold rounded border border-rose-500/20 cursor-pointer"
                               >
                                 Reject ✕
                               </button>
@@ -669,7 +895,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                             {p.status !== 'pending' && (
                               <button 
                                 onClick={() => handleStatusChange(p.id, 'pending')}
-                                className="px-2 py-1 bg-slate-900 text-slate-400 text-[10px] font-semibold rounded border border-slate-800 cursor-pointer"
+                                className="px-1.5 py-1 bg-slate-900 text-slate-400 text-[10px] font-semibold rounded border border-slate-800 cursor-pointer"
                               >
                                 Pending
                               </button>
@@ -693,6 +919,279 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
       <footer className="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500 font-sans mt-auto">
         <p>© {new Date().getFullYear()} IELTS REVOLUTION Administration Panel. All Rights Reserved.</p>
       </footer>
+
+      {/* ADD / CREATE PAYMENT MODAL */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-805 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-scaleIn">
+            <div className="p-5 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Plus className="w-4 h-4 text-red-500" /> Add New Payment Record
+              </h3>
+              <button 
+                onClick={() => setShowAddModal(false)}
+                className="text-slate-400 hover:text-white transition font-bold text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreatePayment} className="p-5 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Student Name (English)</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={formName} 
+                    onChange={e => setFormName(e.target.value)}
+                    placeholder="e.g. Abir Rahman"
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Your Name (Bangla field)</label>
+                  <input 
+                    type="text" 
+                    value={formNameBangla} 
+                    onChange={e => setFormNameBangla(e.target.value)}
+                    placeholder="e.g. আবির রহমান"
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Mobile Number (Phone)</label>
+                  <input 
+                    type="tel" 
+                    required 
+                    value={formPhone} 
+                    onChange={e => setFormPhone(e.target.value)}
+                    placeholder="e.g. 01712345678"
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100 font-mono"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Email Address (Email)</label>
+                  <input 
+                    type="email" 
+                    value={formEmail} 
+                    onChange={e => setFormEmail(e.target.value)}
+                    placeholder="e.g. student@gmail.com"
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Transaction ID (TrxID)</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={formTransactionId} 
+                    onChange={e => setFormTransactionId(e.target.value)}
+                    placeholder="e.g. BKX837D92"
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100 font-mono uppercase"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Status</label>
+                  <select 
+                    value={formStatus} 
+                    onChange={e => setFormStatus(e.target.value as any)}
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="declined">Declined</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Course Plan Name</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={formPlanName} 
+                    onChange={e => setFormPlanName(e.target.value)}
+                    placeholder="Premium Live Batch"
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Course Fee</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={formPlanPrice} 
+                    onChange={e => setFormPlanPrice(e.target.value)}
+                    placeholder="৳ 2,999"
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100 font-sans"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-800 flex justify-end gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={isSaving}
+                  className="px-5 py-2 bg-red-650 hover:bg-red-600 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                >
+                  {isSaving ? <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span> : 'Create'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* EDIT / UPDATE PAYMENT MODAL */}
+      {showEditModal && editingRecord && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-805 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-scaleIn">
+            <div className="p-5 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Edit className="w-4 h-4 text-blue-500" /> Edit Payment Details
+              </h3>
+              <button 
+                onClick={() => {
+                  setShowEditModal(false);
+                  setEditingRecord(null);
+                }}
+                className="text-slate-400 hover:text-white transition font-bold text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdatePayment} className="p-5 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Student Name (English)</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={formName} 
+                    onChange={e => setFormName(e.target.value)}
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Your Name (Bangla field)</label>
+                  <input 
+                    type="text" 
+                    value={formNameBangla} 
+                    onChange={e => setFormNameBangla(e.target.value)}
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Mobile Number (Phone)</label>
+                  <input 
+                    type="tel" 
+                    required 
+                    value={formPhone} 
+                    onChange={e => setFormPhone(e.target.value)}
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100 font-mono"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Email Address (Email)</label>
+                  <input 
+                    type="email" 
+                    value={formEmail} 
+                    onChange={e => setFormEmail(e.target.value)}
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Transaction ID (TrxID)</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={formTransactionId} 
+                    onChange={e => setFormTransactionId(e.target.value)}
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100 font-mono uppercase"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Status</label>
+                  <select 
+                    value={formStatus} 
+                    onChange={e => setFormStatus(e.target.value as any)}
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="declined">Declined</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Course Plan Name</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={formPlanName} 
+                    onChange={e => setFormPlanName(e.target.value)}
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-400">Course Fee</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={formPlanPrice} 
+                    onChange={e => setFormPlanPrice(e.target.value)}
+                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100 font-sans"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-800 flex justify-end gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditingRecord(null);
+                  }}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={isSaving}
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-550 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                >
+                  {isSaving ? <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span> : 'Update'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       
     </div>
   );

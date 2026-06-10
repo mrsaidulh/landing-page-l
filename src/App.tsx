@@ -410,6 +410,7 @@ export default function App() {
   } | null>(null);
   const [paymentPhone, setPaymentPhone] = useState('');
   const [paymentTransaction, setPaymentTransaction] = useState('');
+  const [paymentNameBangla, setPaymentNameBangla] = useState('');
   const [paymentCompleted, setPaymentCompleted] = useState(false);
 
   // Send OTP trigger
@@ -614,6 +615,7 @@ export default function App() {
     setPaymentCompleted(false);
     setPaymentPhone('');
     setPaymentTransaction('');
+    setPaymentNameBangla('');
     setShowPaymentModal(true);
   };
 
@@ -621,6 +623,9 @@ export default function App() {
     e.preventDefault();
     setBookingError('');
     try {
+      if (!paymentNameBangla || !paymentNameBangla.trim()) {
+        throw new Error("দয়া করে আপনার নাম প্রদান করুন!");
+      }
       if (!paymentPhone || !paymentPhone.trim()) {
         throw new Error("দয়া করে আপনার পেমেন্টকৃত মোবাইল নম্বর প্রদান করুন!");
       }
@@ -635,8 +640,9 @@ export default function App() {
         transactionId: paymentTransaction.toUpperCase().trim(),
         planName: selectedPlan?.name || "Premium Live Batch",
         planPrice: selectedPlan?.price || "৳ ২,৯৯৯",
-        studentName: bookingName.trim() || `Student (${paymentPhone})`,
-        studentEmail: bookingEmail.trim() || "N/A"
+        studentName: paymentNameBangla.trim(),
+        studentEmail: bookingEmail.trim() || "N/A",
+        nameBangla: paymentNameBangla.trim()
       };
 
       const response = await fetch('/api/submit-payment', {
@@ -781,7 +787,7 @@ export default function App() {
                 <span className="text-xs text-slate-400">কোর্স রেটিং</span>
               </div>
               <div className="text-center">
-                <span className="block text-2xl md:text-3xl font-extrabold text-white">৩০০০+</span>
+                <span className="block text-2xl md:text-3xl font-extrabold text-white">300+</span>
                 <span className="text-xs text-slate-400">সন্তুষ্ট শিক্ষার্থী</span>
               </div>
             </div>
@@ -2031,7 +2037,19 @@ export default function App() {
                   {/* Payment Form inputs */}
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-[11xp] font-bold text-slate-600 mb-1">১. যে নাম্বার থেকে পেমেন্ট করেছেন (মোবাইল নম্বর):</label>
+                      <label id="payment-bangla-name-label" className="block text-[11xp] font-bold text-slate-600 mb-1">১. আপনার নাম:</label>
+                      <input 
+                        id="payment-bangla-name-input"
+                        type="text"
+                        required
+                        value={paymentNameBangla}
+                        onChange={(e) => setPaymentNameBangla(e.target.value)}
+                        placeholder="যেমন: আবরার রহমান"
+                        className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:border-accent-red transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11xp] font-bold text-slate-600 mb-1">২. যে নাম্বার থেকে পেমেন্ট করেছেন (মোবাইল নম্বর):</label>
                       <input 
                         type="tel"
                         required
@@ -2042,7 +2060,7 @@ export default function App() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[11xp] font-bold text-slate-600 mb-1">২. পেমেন্ট ট্রানজেকশন আইডি (TrxID):</label>
+                      <label className="block text-[11xp] font-bold text-slate-600 mb-1">৩. পেমেন্ট ট্রানজেকশন আইডি (TrxID):</label>
                       <input 
                         type="text"
                         required
