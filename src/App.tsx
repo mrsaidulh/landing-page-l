@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { AdminPanel } from './components/AdminPanel';
 import { 
   BookOpen, 
   Check, 
@@ -13,6 +14,7 @@ import {
   ArrowRight, 
   Sparkles, 
   ChevronRight, 
+  ChevronLeft,
   CheckCircle2, 
   ChevronDown, 
   MessageSquare, 
@@ -31,7 +33,10 @@ import {
   ThumbsUp,
   CheckCircle,
   Video,
-  Users
+  Users,
+  Facebook,
+  Linkedin,
+  ArrowUp
 } from 'lucide-react';
 
 // Sample data for writing upgrade simulator
@@ -91,7 +96,99 @@ const UPGRADE_SAMPLES: UpgradeSample[] = [
   }
 ];
 
+// Testimonials data for auto-sliding carousel
+const TESTIMONIALS = [
+  {
+    id: "ts_1",
+    name: "Nusrat Jahan",
+    type: "Candidate (Academic)",
+    band: "Band Score 7.5",
+    writingScore: "Writing: 7.5",
+    text: "I was previously stuck at a 6.0 in writing and couldn't reach 7.0. After the trainer evaluated my scripts, I understood my mistakes. He showed me line-by-line how to replace weak vocabulary and upgrade my sentence structures. This is a highly practical guideline!",
+    rating: 5,
+    avatarColor: "bg-emerald-600"
+  },
+  {
+    id: "ts_2",
+    name: "Zayed Hasan",
+    type: "Candidate (General Training)",
+    band: "Band Score 7.0",
+    writingScore: "Writing: 7.0",
+    text: "I was extremely worried about GT letter writing. The thesis templates and sentence patterns provided in the official materials helped me immensely. The 1-on-1 trainer feedback sessions were absolute masterclasses.",
+    rating: 5,
+    avatarColor: "bg-blue-600"
+  },
+  {
+    id: "ts_3",
+    name: "Tahmid Chowdhury",
+    type: "Candidate (Academic)",
+    band: "Band Score 8.0",
+    writingScore: "Writing: 8.0",
+    text: "To overcome Grammatical Range and Accuracy weaknesses, IELTS Revolution is an excellent choice. If you are struggling with writing anxiety, you should join this course without a second thought.",
+    rating: 5,
+    avatarColor: "bg-purple-600"
+  },
+  {
+    id: "ts_4",
+    name: "Farhana Huq",
+    type: "Candidate (Academic)",
+    band: "Band Score 7.5",
+    writingScore: "Writing: 7.5",
+    text: "সঠিক কোহেসিভ ডিভাইস এবং কমপ্লেক্স স্ট্রাকচারাল সেন্টেন্স লেখার নিয়মগুলো আমি এই কোর্স থেকেই সহজে আয়ত্ত করেছি। পূর্বের ৫.৫ স্কোর এখন ৭.৫-এ উন্নীত হয়েছে যা আমার প্রত্যাশার চেয়েও বেশি ছিল!",
+    rating: 5,
+    avatarColor: "bg-pink-600"
+  },
+  {
+    id: "ts_5",
+    name: "S. M. Rafiqul Islam",
+    type: "Candidate (General Training)",
+    band: "Band Score 7.5",
+    writingScore: "Writing: 7.5",
+    text: "The mock test evaluations with detailed feedback and estimated band score were extremely accurate. Highly recommended for busy working professionals who need quick and precise guidance.",
+    rating: 5,
+    avatarColor: "bg-amber-600"
+  },
+  {
+    id: "ts_6",
+    name: "Tasnim Ara",
+    type: "Candidate (Academic)",
+    band: "Band Score 7.0",
+    writingScore: "Writing: 7.0",
+    text: "আমার লেখার গ্রামাটিক্যাল ভুল এবং দুর্বল ইন্ট্রোডাকশন পরিবর্তন করার সঠিক নিয়ম এনারা অনেক সহজ করে শিখিয়েছেন। তাদের অডিও ফাইল ফিডব্যাক এবং জুমে সরাসরি হেল্প অসাধারণ ছিল।",
+    rating: 5,
+    avatarColor: "bg-indigo-600"
+  }
+];
+
 export default function App() {
+  const [showAdminView, setShowAdminView] = useState(false);
+  const [copiedShare, setCopiedShare] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 500) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+  
+  // Testimonial Carousel States
+  const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
+  const [isTestimonialAutoPlaying, setIsTestimonialAutoPlaying] = useState(true);
+  const [testimonialVisibleCount, setTestimonialVisibleCount] = useState(3);
+
   // Navigation states
   const [activeTab, setActiveTab] = useState<'all' | 'task1' | 'task2' | 'evaluation'>('all');
 
@@ -108,12 +205,83 @@ export default function App() {
   ];
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
 
+  // Countdown Timer state: sets to end of current day, or adds 24h if under 4h left
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const getTargetTime = () => {
+      const now = new Date();
+      const target = new Date();
+      target.setHours(23, 59, 59, 999);
+      
+      // If less than 4 hours remaining, set target to tomorrow night to maintain dynamic pressure
+      if (target.getTime() - now.getTime() < 4 * 60 * 60 * 1000) {
+        target.setDate(target.getDate() + 1);
+      }
+      return target;
+    };
+
+    const targetTime = getTargetTime();
+
+    const updateTimer = () => {
+      const now = new Date();
+      const difference = targetTime.getTime() - now.getTime();
+
+      if (difference <= 0) {
+        setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+
+      const hours = Math.floor(difference / (1000 * 60 * 60));
+      const minutes = Math.floor((difference / 1000 / 60) % 60);
+      const seconds = Math.floor((difference / 1000) % 60);
+
+      setTimeLeft({ hours, minutes, seconds });
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentBannerIndex((prev) => (prev + 1) % bannerTexts.length);
     }, 4000);
     return () => clearInterval(timer);
   }, []);
+
+  // Resize Handler to make Carousel responsive
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setTestimonialVisibleCount(1);
+      } else if (window.innerWidth < 1024) {
+        setTestimonialVisibleCount(2);
+      } else {
+        setTestimonialVisibleCount(3);
+      }
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Testimonial Auto Slider effect
+  useEffect(() => {
+    if (!isTestimonialAutoPlaying) return;
+    const interval = setInterval(() => {
+      setCurrentTestimonialIndex((prev) => {
+        const maxIndex = TESTIMONIALS.length - testimonialVisibleCount;
+        if (prev >= maxIndex || prev < 0) {
+          return 0; // wrap back to start
+        }
+        return prev + 1;
+      });
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isTestimonialAutoPlaying, testimonialVisibleCount]);
 
   // Contact/Booking state variables
   const [bookingName, setBookingName] = useState('');
@@ -398,43 +566,102 @@ export default function App() {
     setShowPaymentModal(true);
   };
 
-  const handlePaymentSubmit = (e: React.FormEvent) => {
+  const handlePaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setBookingError('');
     try {
-      if (!paymentPhone || !paymentTransaction) {
-        throw new Error("দয়া করে আপনার পেমেন্ট নম্বর এবং ট্রানজেকশন আইডি প্রদান করুন!");
+      if (!paymentPhone || !paymentPhone.trim()) {
+        throw new Error("দয়া করে আপনার পেমেন্টকৃত মোবাইল নম্বর প্রদান করুন!");
       }
+      if (!paymentTransaction || !paymentTransaction.trim()) {
+        throw new Error("দয়া করে আপনার পেমেন্ট ট্রানজেকশন আইডি (TrxID) প্রদান করুন!");
+      }
+      
       setIsAnalyzing(true);
-      setTimeout(() => {
-        setIsAnalyzing(false);
+      
+      const payload = {
+        phone: paymentPhone.trim(),
+        transactionId: paymentTransaction.toUpperCase().trim(),
+        planName: selectedPlan?.name || "Premium Live Batch",
+        planPrice: selectedPlan?.price || "৳ ২,৯৯৯",
+        studentName: bookingName.trim() || `Student (${paymentPhone})`,
+        studentEmail: bookingEmail.trim() || "N/A"
+      };
+
+      const response = await fetch('/api/submit-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
         setPaymentCompleted(true);
-      }, 1500);
+      } else {
+        throw new Error(data.error || 'পেমেন্ট সাবমিট করতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
+      }
     } catch (err: any) {
       setBookingError(err.message || 'পেমেন্ট সম্পন্ন করতে সমস্যা হয়েছে।');
+    } finally {
+      setIsAnalyzing(false);
     }
   };
+
+  if (showAdminView) {
+    return <AdminPanel onClose={() => setShowAdminView(false)} />;
+  }
 
   return (
     <div className="bg-bg-light text-slate-800 antialiased font-sans min-h-screen scroll-smooth">
       
       {/* Dynamic Promotion Banner */}
-      <div id="promo-banner" className="bg-accent-red text-white py-2 px-4 text-center text-xs md:text-sm font-semibold tracking-wide flex justify-center items-center gap-2 overflow-hidden min-h-[36px] md:min-h-[40px] relative">
-        <Sparkles className="w-4 h-4 animate-pulse hidden sm:inline" />
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={currentBannerIndex}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-            className="inline-flex items-center gap-1 flex-wrap justify-center"
-          >
-            <span>{bannerTexts[currentBannerIndex].text}</span>
-            <a href="#pricing" className="underline hover:text-accent-gold ml-2 transition font-bold whitespace-nowrap">
-              {bannerTexts[currentBannerIndex].cta}
-            </a>
-          </motion.span>
-        </AnimatePresence>
+      <div id="promo-banner" className="bg-accent-red text-white py-2 px-4 text-center text-xs font-semibold tracking-wide flex flex-col md:flex-row justify-center items-center gap-3 md:gap-6 overflow-hidden min-h-[46px] md:min-h-[40px] relative z-50">
+        <div className="flex items-center gap-1.5 justify-center">
+          <Sparkles className="w-4 h-4 animate-pulse shrink-0 text-accent-gold" />
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={currentBannerIndex}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="inline-flex items-center gap-1 flex-wrap justify-center text-xs md:text-sm"
+            >
+              <span>{bannerTexts[currentBannerIndex].text}</span>
+              <a href="#pricing" className="underline hover:text-accent-gold ml-1.5 transition font-extrabold whitespace-nowrap text-accent-gold">
+                {bannerTexts[currentBannerIndex].cta}
+              </a>
+            </motion.span>
+          </AnimatePresence>
+        </div>
+
+        {/* Beautiful Countdown Urgency Block */}
+        <div className="flex items-center gap-1.5 text-xs text-white shrink-0 bg-black/20 px-3 py-1 rounded-full border border-white/10 select-none">
+          <Clock className="w-3.5 h-3.5 text-accent-gold shrink-0" />
+          <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-200">অফারটি শেষ হতে বাকি:</span>
+          
+          <div className="flex items-center gap-1 font-mono text-xs md:text-sm font-black">
+            <div className="flex flex-col items-center">
+              <span className="bg-slate-950 px-1.5 py-0.5 rounded text-accent-gold shadow-sm font-extrabold min-w-[20px] text-center">
+                {String(timeLeft.hours).padStart(2, '0')}
+              </span>
+            </div>
+            <span className="text-white animate-pulse">:</span>
+            <div className="flex flex-col items-center">
+              <span className="bg-slate-950 px-1.5 py-0.5 rounded text-accent-gold shadow-sm font-extrabold min-w-[20px] text-center">
+                {String(timeLeft.minutes).padStart(2, '0')}
+              </span>
+            </div>
+            <span className="text-white animate-pulse">:</span>
+            <div className="flex flex-col items-center">
+              <span className="bg-slate-950 px-1.5 py-0.5 rounded text-accent-gold shadow-sm font-extrabold min-w-[20px] text-center text-emerald-400">
+                {String(timeLeft.seconds).padStart(2, '0')}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Navigation Header */}
@@ -473,7 +700,7 @@ export default function App() {
       </header>
 
       {/* Hero Section */}
-      <section id="hero-section" className="bg-gradient-to-br from-navy-primary to-navy-secondary text-white py-12 md:py-24 relative overflow-hidden">
+      <section id="hero-section" className="bg-gradient-to-br from-navy-primary to-navy-secondary text-white pt-8 pb-12 md:pt-10 md:pb-16 lg:pt-12 lg:pb-16 relative overflow-hidden">
         {/* Abstract Background Accents */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-accent-red/5 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent-gold/5 rounded-full blur-3xl pointer-events-none"></div>
@@ -1301,83 +1528,151 @@ export default function App() {
       </section>
 
       {/* Students Testimonials Carousel/List */}
-      <section className="py-16 bg-navy-primary text-white">
+      <section className="py-16 bg-navy-primary text-white overflow-hidden relative" id="testimonials">
         <div className="container mx-auto px-4">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="text-accent-gold text-xs uppercase font-bold tracking-widest bg-white/5 border border-white/10 px-3 py-1 rounded-full">
-              Succces Stories ⭐⭐⭐⭐⭐
-            </span>
-            <h2 className="text-2xl md:text-4xl font-bold mt-3">শিক্ষার্থীদের মতামত ও সাফল্য ক্যানভাস</h2>
-            <div className="h-1 w-16 bg-accent-red mx-auto mt-4"></div>
-            <p className="text-slate-300 text-xs md:text-sm mt-3">আইইএলটিএস রিভোলিউশন কোর্সের মাধ্যমে যারা পূর্বে অনেক আটকে থেকে পরে চমৎকার ভালো রাইটিং স্কোর করতে পেরেছেন।</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+            <div className="text-left max-w-2xl">
+              <span className="text-accent-gold text-xs uppercase font-bold tracking-widest bg-white/5 border border-white/10 px-3 py-1 rounded-full inline-flex items-center gap-1">
+                ⭐ Succces Stories 
+              </span>
+              <h2 className="text-2xl md:text-4xl font-bold mt-3">শিক্ষার্থীদের মতামত ও সাফল্য ক্যানভাস</h2>
+              <div className="h-1 w-16 bg-accent-red mt-4 rounded-full"></div>
+              <p className="text-slate-300 text-xs md:text-sm mt-3">
+                আইইএলটিএস রিভোলিউশন কোর্সের মাধ্যমে যারা পূর্বে অনেক আটকে থেকে পরে চমৎকার ভালো রাইটিং স্কোর করতে পেরেছেন।
+              </p>
+            </div>
             
-            {/* Student card 1 */}
-            <div className="bg-navy-secondary p-6 rounded-2xl border border-white/5 space-y-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="font-bold text-white">Nusrat Jahan</h4>
-                  <p className="text-[10px] text-slate-400">Candidate (Academic), Band Score 7.5</p>
-                </div>
-                <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-xs font-bold font-mono">
-                  Writing: 7.5
-                </div>
-              </div>
-              <div className="flex gap-0.5 text-accent-gold">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current" />
-                ))}
-              </div>
-              <p className="text-slate-300 text-xs leading-relaxed italic">
-                "I was previously stuck at a 6.0 in writing and couldn't reach 7.0. After the trainer evaluated my scripts, I understood my mistakes. He showed me line-by-line how to replace weak vocabulary and upgrade my sentence structures. This is a highly practical guideline!"
-              </p>
-            </div>
+            {/* Navigation Slider Controls */}
+            <div className="flex items-center gap-2 self-start md:self-end">
+              <button 
+                onClick={() => {
+                  setCurrentTestimonialIndex((prev) => {
+                    const maxIndex = TESTIMONIALS.length - testimonialVisibleCount;
+                    if (prev <= 0) return maxIndex;
+                    return prev - 1;
+                  });
+                }}
+                className="p-2 rounded-xl bg-navy-secondary border border-white/5 text-slate-300 hover:text-white hover:border-white/20 transition active:scale-95 cursor-pointer flex items-center justify-center shadow-md focus:outline-none"
+                title="পূর্ববর্তী রিভিউ"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              
+              <span className="text-slate-500 text-xs font-mono select-none px-2">
+                {currentTestimonialIndex + 1} / {TESTIMONIALS.length - testimonialVisibleCount + 1}
+              </span>
 
-            {/* Student card 2 */}
-            <div className="bg-navy-secondary p-6 rounded-2xl border border-white/5 space-y-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="font-bold text-white">Zayed Hasan</h4>
-                  <p className="text-[10px] text-slate-400">Candidate (General Training), Band Score 7.0</p>
-                </div>
-                <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-xs font-bold font-mono">
-                  Writing: 7.0
-                </div>
-              </div>
-              <div className="flex gap-0.5 text-accent-gold">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current" />
-                ))}
-              </div>
-              <p className="text-slate-300 text-xs leading-relaxed italic">
-                "I was extremely worried about GT letter writing. The thesis templates and sentence patterns provided in the official materials helped me immensely. The 1-on-1 trainer feedback sessions were absolute masterclasses."
-              </p>
+              <button 
+                onClick={() => {
+                  setCurrentTestimonialIndex((prev) => {
+                    const maxIndex = TESTIMONIALS.length - testimonialVisibleCount;
+                    if (prev >= maxIndex) return 0;
+                    return prev + 1;
+                  });
+                }}
+                className="p-2 rounded-xl bg-navy-secondary border border-white/5 text-slate-300 hover:text-white hover:border-white/20 transition active:scale-95 cursor-pointer flex items-center justify-center shadow-md focus:outline-none"
+                title="পরবর্তী রিভিউ"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+              
+              <button
+                onClick={() => setIsTestimonialAutoPlaying(!isTestimonialAutoPlaying)}
+                className={`ml-2 px-2.5 py-1.5 rounded-lg text-[10px] font-bold tracking-wider uppercase transition flex items-center gap-1 border cursor-pointer ${
+                  isTestimonialAutoPlaying 
+                    ? 'bg-emerald-600/10 text-emerald-400 border-emerald-500/20' 
+                    : 'bg-amber-600/10 text-amber-400 border-amber-500/20'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${isTestimonialAutoPlaying ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`}></span>
+                {isTestimonialAutoPlaying ? 'Auto on' : 'Paused'}
+              </button>
             </div>
-
-            {/* Student card 3 */}
-            <div className="bg-navy-secondary p-6 rounded-2xl border border-white/5 space-y-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="font-bold text-white">Tahmid Chowdhury</h4>
-                  <p className="text-[10px] text-slate-400">Candidate (Academic), Band Score 8.0</p>
-                </div>
-                <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-xs font-bold font-mono">
-                  Writing: 8.0
-                </div>
-              </div>
-              <div className="flex gap-0.5 text-accent-gold">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current" />
-                ))}
-              </div>
-              <p className="text-slate-300 text-xs leading-relaxed italic">
-                "To overcome Grammatical Range and Accuracy weaknesses, IELTS Revolution is an excellent choice. If you are struggling with writing anxiety, you should join this course without a second thought."
-              </p>
-            </div>
-
           </div>
+
+          {/* Carousel Viewport Container */}
+          <div className="relative w-full overflow-hidden">
+            <div 
+              className="flex transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) py-4" 
+              style={{
+                transform: `translate3d(-${currentTestimonialIndex * (100 / testimonialVisibleCount)}%, 0, 0)`,
+                width: `${(TESTIMONIALS.length * 100) / testimonialVisibleCount}%`
+              }}
+              onMouseEnter={() => setIsTestimonialAutoPlaying(false)}
+              onMouseLeave={() => setIsTestimonialAutoPlaying(true)}
+            >
+              {TESTIMONIALS.map((item) => (
+                <div 
+                  key={item.id} 
+                  className="shrink-0 px-3 transition-all duration-300"
+                  style={{ width: `${100 / TESTIMONIALS.length}%` }}
+                >
+                  <div className="bg-navy-secondary p-5 md:p-6 rounded-2xl border border-white/5 space-y-4 hover:border-white/10 hover:shadow-2xl transition hover:-translate-y-1 duration-300 h-full flex flex-col justify-between">
+                    
+                    <div className="space-y-3">
+                      
+                      {/* Rating Stars & Band Level Tag */}
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="flex gap-0.5 text-accent-gold">
+                          {[...Array(item.rating)].map((_, i) => (
+                            <Star key={i} className="w-4 h-4 fill-current text-accent-gold" />
+                          ))}
+                        </div>
+                        <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded text-xs font-bold font-mono tracking-wide">
+                          {item.writingScore}
+                        </span>
+                      </div>
+
+                      {/* Message Content */}
+                      <p className="text-slate-300 text-xs md:text-[13px] leading-relaxed italic select-none">
+                        "{item.text}"
+                      </p>
+
+                    </div>
+
+                    {/* Student Info Card Segment */}
+                    <div className="border-t border-white/5 pt-4 mt-2 flex items-center gap-3">
+                      <div className={`${item.avatarColor} w-10 h-10 rounded-full flex items-center justify-center text-white font-extrabold text-sm shadow`}>
+                        {item.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white text-xs md:text-sm">{item.name}</h4>
+                        <p className="text-[10px] text-slate-400 font-medium">
+                          {item.type} • <span className="text-accent-gold font-bold">{item.band}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Dots Indicator */}
+          <div className="flex justify-center items-center gap-2 mt-8">
+            {[...Array(TESTIMONIALS.length - testimonialVisibleCount + 1)].map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  setCurrentTestimonialIndex(idx);
+                  setIsTestimonialAutoPlaying(false); // temporary freeze custom select
+                }}
+                className={`h-2 rounded-full transition-all duration-300 focus:outline-none cursor-pointer ${
+                  currentTestimonialIndex === idx 
+                    ? 'bg-accent-red w-8' 
+                    : 'bg-slate-600 hover:bg-slate-400 w-2.5'
+                }`}
+                aria-label={`Slide to page ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          <p className="text-center text-slate-500 text-[10px] sm:text-xs mt-4 italic">
+            💡 রিভিউ কার্ডের উপরে মাউস রাখলে অটো-স্লাইড সাময়িকভাবে থেমে থাকবে।
+          </p>
+
         </div>
       </section>
 
@@ -1572,15 +1867,70 @@ export default function App() {
 
       {/* Footer Element */}
       <footer className="bg-navy-primary text-slate-400 py-12 border-t border-slate-800">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="mb-6 md:mb-0 space-y-2 text-center md:text-left">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8">
+          
+          <div className="space-y-2 text-center md:text-left">
             <span className="text-xl font-bold text-white tracking-tight">IELTS <span className="text-accent-red">REVOLUTION</span></span>
             <p className="text-xs text-slate-500">© 2026 IELTS Revolution. All rights reserved.</p>
           </div>
-          <div className="flex flex-wrap justify-center gap-6 text-xs md:text-sm">
+
+          {/* Social Share Buttons */}
+          <div className="flex flex-col items-center space-y-2">
+            <span className="text-xs font-semibold text-slate-400 tracking-wider">এই কোর্সটি বন্ধুদের সাথে শেয়ার করুন:</span>
+            <div className="flex items-center gap-3">
+              <a 
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://ieltsrevolution.com')}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="p-2.5 rounded-full bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition duration-300 border border-[#1877F2]/20 flex items-center justify-center shadow-sm"
+                title="Share on Facebook"
+                id="share-facebook"
+              >
+                <Facebook className="w-4 h-4" />
+              </a>
+              <a 
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://ieltsrevolution.com')}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="p-2.5 rounded-full bg-[#0A66C2]/10 text-[#0A66C2] hover:bg-[#0A66C2] hover:text-white transition duration-300 border border-[#0A66C2]/20 flex items-center justify-center shadow-sm"
+                title="Share on LinkedIn"
+                id="share-linkedin"
+              >
+                <Linkedin className="w-4 h-4" />
+              </a>
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href || 'https://ieltsrevolution.com');
+                  setCopiedShare(true);
+                  setTimeout(() => setCopiedShare(false), 2000);
+                }}
+                className={`p-2.5 rounded-full transition duration-300 border flex items-center justify-center shadow-sm cursor-pointer ${
+                  copiedShare 
+                    ? 'bg-emerald-600/20 text-emerald-400 border-emerald-500/30' 
+                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border-slate-700'
+                }`}
+                title={copiedShare ? "Copied!" : "Copy Link"}
+                id="share-copy-link"
+              >
+                {copiedShare ? (
+                  <span className="text-[10px] font-bold px-1 text-emerald-400">কপি হয়েছে!</span>
+                ) : (
+                  <Share2 className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap justify-center items-center gap-6 text-xs md:text-sm">
             <span className="hover:text-white cursor-pointer transition">প্রাইভেসি পলিসি</span>
             <span className="hover:text-white cursor-pointer transition">শর্তাবলী</span>
             <a href="mailto:info@ieltsrevolution.com" className="hover:text-white transition">যোগাযোগ</a>
+            <button 
+              onClick={() => setShowAdminView(true)}
+              className="hover:text-amber-400 transition flex items-center gap-1 font-semibold text-xs border border-slate-700 hover:border-amber-400 rounded px-2.5 py-1 text-slate-400 cursor-pointer"
+            >
+              🔐 Admin Dashboard
+            </button>
           </div>
         </div>
       </footer>
@@ -1698,6 +2048,25 @@ export default function App() {
       )}
 
 
+
+      {/* Scroll to Top Floating Action Button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            key="scroll-top-btn"
+            initial={{ opacity: 0, scale: 0.8, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 16 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            onClick={scrollToTop}
+            className="fixed bottom-6 right-6 md:bottom-8 md:right-8 bg-accent-red text-white p-3 md:p-3.5 rounded-full shadow-2xl hover:bg-navy-primary border border-white/20 hover:border-white/30 transition duration-300 cursor-pointer flex items-center justify-center z-40 group active:scale-95"
+            title="উপরে যান (Scroll to Top)"
+            id="scroll-to-top"
+          >
+            <ArrowUp className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-1" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
     </div>
   );

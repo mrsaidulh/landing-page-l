@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { createServer as createViteServer } from "vite";
 
 // CRM Defaults provided by the user
@@ -53,6 +54,158 @@ async function startServer() {
   app.use(express.urlencoded({ extended: true }));
 
   // API routes FIRST
+
+  const PAYMENTS_FILE = path.join(process.cwd(), "payments.json");
+
+  // Helper to read/write payments with seeding support
+  function getPayments() {
+    try {
+      if (fs.existsSync(PAYMENTS_FILE)) {
+        const data = fs.readFileSync(PAYMENTS_FILE, "utf-8");
+        return JSON.parse(data);
+      }
+    } catch (err) {
+      console.error("Error reading payments file:", err);
+    }
+    
+    // Seed initial data
+    const initialPayments = [
+      {
+        id: "pay_1",
+        studentName: "Nusrat Jahan",
+        studentEmail: "nusrat.jahan@gmail.com",
+        phone: "01712233445",
+        transactionId: "BKX837D92",
+        planName: "Premium Live Batch",
+        planPrice: "৳ ২,৯৯৯",
+        timestamp: new Date(Date.now() - 3600000 * 4).toISOString(), // 4h ago
+        status: "approved"
+      },
+      {
+        id: "pay_2",
+        studentName: "Zayed Hasan",
+        studentEmail: "zayed.hasan@yahoo.com",
+        phone: "01340861314",
+        transactionId: "NGD921K83",
+        planName: "Premium Live Batch",
+        planPrice: "৳ ২,৯৯৯",
+        timestamp: new Date(Date.now() - 3600000 * 1.5).toISOString(), // 1.5h ago
+        status: "pending"
+      },
+      {
+        id: "pay_3",
+        studentName: "Tahmid Chowdhury",
+        studentEmail: "tahmid@outlook.com",
+        phone: "01923344556",
+        transactionId: "BKX482M19",
+        planName: "Premium Live Batch",
+        planPrice: "৳ ২,৯৯৯",
+        timestamp: new Date(Date.now() - 3600000 * 0.5).toISOString(), // 30m ago
+        status: "approved"
+      }
+    ];
+    
+    try {
+      fs.writeFileSync(PAYMENTS_FILE, JSON.stringify(initialPayments, null, 2), "utf-8");
+    } catch (err) {
+      console.error("Error initializing mock payments:", err);
+    }
+    return initialPayments;
+  }
+
+  // Submit new payment endpoint
+  app.post("/api/submit-payment", (req, res) => {
+    try {
+      const { phone, transactionId, planName, planPrice, studentName, studentEmail } = req.body;
+      if (!phone || !transactionId) {
+        return res.status(400).json({ success: false, error: "মোবাইল নম্বর এবং ট্রানজেকশন আইডি আবশ্যক।" });
+      }
+
+      const payments = getPayments();
+      
+      // Check if transaction ID already exists to avoid duplicates
+      const dup = payments.find(p => p.transactionId.toLowerCase() === transactionId.toLowerCase());
+      if (dup) {
+        return res.status(400).json({ success: false, error: "এই ট্রানজেকশন আইডিটি ইতিমধ্যে ব্যবহৃত হয়েছে!" });
+      }
+
+      const newPayment = {
+        id: "pay_" + Date.now(),
+        studentName: studentName || "Unknown Student",
+        studentEmail: studentEmail || "N/A",
+        phone: phone,
+        transactionId: transactionId.toUpperCase().trim(),
+        planName: planName || "Premium Live Batch",
+        planPrice: planPrice || "৳ ২,৯৯৯",
+        timestamp: new Date().toISOString(),
+        status: "pending"
+      };
+
+      payments.unshift(newPayment); // add to top
+      fs.writeFileSync(PAYMENTS_FILE, JSON.stringify(payments, null, 2), "utf-8");
+
+      res.json({ success: true, payment: newPayment });
+    } catch (err: any) {
+      console.error("Error submitting payment:", err);
+      res.status(500).json({ success: false, error: err.message || "পেমেন্ট সংরক্ষণ করতে সমস্যা হয়েছে।" });
+    }
+  });
+
+  // Admin login API
+  app.post("/api/admin/login", (req, res) => {
+    const { username, password } = req.body;
+    const expectedUser = process.env.ADMIN_USERNAME || "admin";
+    const expectedPass = process.env.ADMIN_PASSWORD || "admin123";
+
+    if (username === expectedUser && password === expectedPass) {
+      res.json({ success: true, token: "admin-auth-token-xyz-123" });
+    } else {
+      res.status(401).json({ success: false, error: "দুঃখিত, ইউজারনেম বা পাসওয়ার্ড সঠিক নয়!" });
+    }
+  });
+
+  // Helper function to verify admin token
+  const verifyAdminToken = (req: any, res: any, next: any) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader === "Bearer admin-auth-token-xyz-123") {
+      next();
+    } else {
+      res.status(401).json({ success: false, error: "অননুমোদিত এক্সেস! দয়া করে লগইন করুন।" });
+    }
+  };
+
+  // Admin get payments list
+  app.get("/api/admin/payments", verifyAdminToken, (req, res) => {
+    try {
+      const payments = getPayments();
+      res.json({ success: true, payments });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message || "পেমেন্ট তথ্য নিয়ে আসতে ব্যর্থ হয়েছে।" });
+    }
+  });
+
+  // Admin update payment status
+  app.post("/api/admin/update-status", verifyAdminToken, (req, res) => {
+    try {
+      const { id, status } = req.body;
+      if (!id || !status) {
+        return res.status(400).json({ success: false, error: "আইডি এবং স্ট্যাটাস আবশ্যক।" });
+      }
+
+      const payments = getPayments();
+      const index = payments.findIndex(p => p.id === id);
+      if (index === -1) {
+        return res.status(404).json({ success: false, error: "পেমেন্ট রেকর্ডটি পাওয়া যায়নি।" });
+      }
+
+      payments[index].status = status; // "pending", "approved", "declined"
+      fs.writeFileSync(PAYMENTS_FILE, JSON.stringify(payments, null, 2), "utf-8");
+
+      res.json({ success: true, payment: payments[index] });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message || "স্ট্যাটাস পরিবর্তন সম্পন্ন করা যায়নি।" });
+    }
+  });
 
   // Main Lead Submission API (direct without OTP verification)
   app.post("/api/submit-lead", async (req, res) => {
