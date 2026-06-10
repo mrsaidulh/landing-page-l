@@ -336,7 +336,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               </form>
 
               <div className="mt-8 border-t border-slate-800 pt-4 text-center">
-                <span className="text-[10px] text-slate-500 font-mono">Default credentials listed in .env.example file. (admin / admin123)</span>
+                <span className="text-[10px] text-slate-500 font-mono">Default credentials listed in .env.example file. (administrator / Maailulp1$%)</span>
               </div>
             </div>
           </div>

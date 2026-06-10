@@ -751,12 +751,12 @@ export default function App() {
       </header>
 
       {/* Hero Section */}
-      <section id="hero-section" className="bg-gradient-to-br from-navy-primary to-navy-secondary text-white pt-8 pb-12 md:pt-10 md:pb-16 lg:pt-12 lg:pb-16 relative overflow-hidden">
+      <section id="hero-section" className="bg-gradient-to-br from-navy-primary to-navy-secondary text-white pt-6 pb-12 md:pt-8 md:pb-16 lg:pt-10 lg:pb-16 relative overflow-hidden">
         {/* Abstract Background Accents */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-accent-red/5 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent-gold/5 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="container mx-auto px-4 grid lg:grid-cols-12 gap-12 items-center relative z-10">
+        <div className="container mx-auto px-4 grid lg:grid-cols-12 gap-12 items-start relative z-10">
           
           {/* Hero Content Left */}
           <div className="lg:col-span-7 space-y-6">
@@ -813,10 +813,16 @@ export default function App() {
               {!bookingSubmitted ? (
                 <>
                   <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-navy-primary flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-accent-red" /> ফ্রি ওরিয়েন্টেশন বুক করুন
+                    <h3 className="text-xl md:text-2xl font-bold text-navy-primary leading-snug">
+                      <span className="flex items-center gap-2">
+                        <Calendar className="w-5 h-5 text-accent-red shrink-0" />
+                        <span>প্রতি শুক্রবার রাত ৯ টায়</span>
+                      </span>
+                      <span className="block text-sm md:text-base text-slate-600 font-semibold pl-7 mt-1">
+                        আমাদের Free Webinar এ join করতে
+                      </span>
                     </h3>
-                    <p className="text-slate-500 text-xs mt-1">
+                    <p className="text-slate-500 text-xs mt-2 pl-7">
                       {isOtpSent 
                         ? "আপনার মোবাইল ওটিপি যাচাইকরণ সম্পন্ন করুন।" 
                         : "নিচের ফর্মটি পূরণ করে পরবর্তী ফ্রি লাইভ ক্লাসের স্পেশাল স্লট এখনই বুক করুন।"}
@@ -1928,7 +1934,7 @@ export default function App() {
             <span className="text-xs font-semibold text-slate-400 tracking-wider">এই কোর্সটি বন্ধুদের সাথে শেয়ার করুন:</span>
             <div className="flex items-center gap-3">
               <a 
-                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://ieltsrevolution.com')}`} 
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://course.ieltsrevolution.com')}&quote=${encodeURIComponent('IELTS Revolution - Exclusive IELTS Writing Course! আইইএলটিএস রাইটিং-এ কাঙ্ক্ষিত স্কোর অর্জনের সহজ সমাধান। প্রতি শুক্রবার রাত ৯ টায় আমাদের Free Webinar এ জয়েন করতে ভিজিট করুন!')}`} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="p-2.5 rounded-full bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition duration-300 border border-[#1877F2]/20 flex items-center justify-center shadow-sm"
@@ -1938,7 +1944,7 @@ export default function App() {
                 <Facebook className="w-4 h-4" />
               </a>
               <a 
-                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://ieltsrevolution.com')}`} 
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://course.ieltsrevolution.com')}`} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="p-2.5 rounded-full bg-[#0A66C2]/10 text-[#0A66C2] hover:bg-[#0A66C2] hover:text-white transition duration-300 border border-[#0A66C2]/20 flex items-center justify-center shadow-sm"
@@ -1949,7 +1955,7 @@ export default function App() {
               </a>
               <button 
                 onClick={() => {
-                  navigator.clipboard.writeText(window.location.href || 'https://ieltsrevolution.com');
+                  navigator.clipboard.writeText('https://course.ieltsrevolution.com');
                   setCopiedShare(true);
                   setTimeout(() => setCopiedShare(false), 2000);
                 }}

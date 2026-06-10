@@ -154,8 +154,8 @@ async function startServer() {
   // Admin login API
   app.post("/api/admin/login", (req, res) => {
     const { username, password } = req.body;
-    const expectedUser = process.env.ADMIN_USERNAME || "admin";
-    const expectedPass = process.env.ADMIN_PASSWORD || "admin123";
+    const expectedUser = process.env.ADMIN_USERNAME || "administrator";
+    const expectedPass = process.env.ADMIN_PASSWORD || "Maailulp1$%";
 
     if (username === expectedUser && password === expectedPass) {
       res.json({ success: true, token: "admin-auth-token-xyz-123" });
