@@ -157,6 +157,46 @@ const TESTIMONIALS = [
     text: "আমার লেখার গ্রামাটিক্যাল ভুল এবং দুর্বল ইন্ট্রোডাকশন পরিবর্তন করার সঠিক নিয়ম এনারা অনেক সহজ করে শিখিয়েছেন। তাদের অডিও ফাইল ফিডব্যাক এবং জুমে সরাসরি হেল্প অসাধারণ ছিল।",
     rating: 5,
     avatarColor: "bg-indigo-600"
+  },
+  {
+    id: "ts_7",
+    name: "Rafid Ahsan",
+    type: "Candidate (Academic)",
+    band: "Band Score 7.5",
+    writingScore: "Writing: 7.5",
+    text: "আমি আগে বুঝতে পারতাম না কোথায় অফ-টপিক বা রিলিজিয়াস রিডান্ডেন্সি হচ্ছে। মেন্টরদের ডেডিকেটেড প্রতিটি ইভ্যালুয়েশন আমার লেখার গভীরতা ও যুক্তি বৃদ্ধি করতে অসাধারণ ভূমিকা রেখেছে।",
+    rating: 5,
+    avatarColor: "bg-teal-600"
+  },
+  {
+    id: "ts_8",
+    name: "Jannatul Fardous",
+    type: "Candidate (Academic)",
+    band: "Band Score 8.0",
+    writingScore: "Writing: 7.5",
+    text: "Writing Task 1-এর বিভিন্ন জটিল ম্যাপ এবং প্রসেস ডায়াগ্রাম বর্ণনা করার সঠিক স্ট্রাকচারগুলো খুব গোছানো ছিল। বিশেষ করে মেন্টরের ভয়েস মেসেজ ফিডব্যাক থেকে ছোট ছোট ভোকাবুলারি ভুল শুধরে নিতে পেরেছি।",
+    rating: 5,
+    avatarColor: "bg-rose-600"
+  },
+  {
+    id: "ts_9",
+    name: "Arifur Rahman",
+    type: "Candidate (General Training)",
+    band: "Band Score 7.5",
+    writingScore: "Writing: 7.0",
+    text: "The body paragraph structures and coherence secrets explained in the video lectures are top-tier. My Writing score went from 6.0 to 7.0 in just 3 weeks under their intense guidances!",
+    rating: 5,
+    avatarColor: "bg-sky-600"
+  },
+  {
+    id: "ts_10",
+    name: "Dr. Sadia Afrin",
+    type: "Candidate (Academic)",
+    band: "Band Score 7.5",
+    writingScore: "Writing: 7.5",
+    text: "Being a medical professional, managing preparation time was tough. The on-demand writing assessment service and flexible live support from IELTS Revolution mended all my writing gaps beautifully.",
+    rating: 5,
+    avatarColor: "bg-violet-600"
   }
 ];
 
@@ -254,13 +294,24 @@ export default function App() {
   // Resize Handler to make Carousel responsive
   useEffect(() => {
     const handleResize = () => {
+      let visible = 3;
       if (window.innerWidth < 768) {
-        setTestimonialVisibleCount(1);
+        visible = 1;
       } else if (window.innerWidth < 1024) {
-        setTestimonialVisibleCount(2);
+        visible = 2;
       } else {
-        setTestimonialVisibleCount(3);
+        visible = 3;
       }
+      setTestimonialVisibleCount(visible);
+      
+      // Safety bounds-check on resize
+      setCurrentTestimonialIndex((prev) => {
+        const maxIndex = TESTIMONIALS.length - visible;
+        if (prev > maxIndex) {
+          return Math.max(0, maxIndex);
+        }
+        return prev;
+      });
     };
     
     handleResize();
@@ -1594,10 +1645,9 @@ export default function App() {
           {/* Carousel Viewport Container */}
           <div className="relative w-full overflow-hidden">
             <div 
-              className="flex transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) py-4" 
+              className="flex transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) py-4 w-full" 
               style={{
-                transform: `translate3d(-${currentTestimonialIndex * (100 / testimonialVisibleCount)}%, 0, 0)`,
-                width: `${(TESTIMONIALS.length * 100) / testimonialVisibleCount}%`
+                transform: `translate3d(-${currentTestimonialIndex * (100 / testimonialVisibleCount)}%, 0, 0)`
               }}
               onMouseEnter={() => setIsTestimonialAutoPlaying(false)}
               onMouseLeave={() => setIsTestimonialAutoPlaying(true)}
@@ -1605,8 +1655,7 @@ export default function App() {
               {TESTIMONIALS.map((item) => (
                 <div 
                   key={item.id} 
-                  className="shrink-0 px-3 transition-all duration-300"
-                  style={{ width: `${100 / TESTIMONIALS.length}%` }}
+                  className="w-full md:w-1/2 lg:w-1/3 shrink-0 px-3 transition-all duration-300"
                 >
                   <div className="bg-navy-secondary p-5 md:p-6 rounded-2xl border border-white/5 space-y-4 hover:border-white/10 hover:shadow-2xl transition hover:-translate-y-1 duration-300 h-full flex flex-col justify-between">
                     
