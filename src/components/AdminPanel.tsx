@@ -40,6 +40,100 @@ interface AdminPanelProps {
 }
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
+  const [comfortTheme, setComfortTheme] = useState<'slate' | 'sepia' | 'sage'>('slate');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('admin_comfort_theme') as 'slate' | 'sepia' | 'sage';
+    if (saved && ['slate', 'sepia', 'sage'].includes(saved)) {
+      setComfortTheme(saved);
+    }
+  }, []);
+
+  const handleThemeChange = (newTheme: 'slate' | 'sepia' | 'sage') => {
+    setComfortTheme(newTheme);
+    localStorage.setItem('admin_comfort_theme', newTheme);
+  };
+
+  const themeStyles = {
+    slate: {
+      root: "bg-[#0b0f19] text-slate-300",
+      header: "bg-[#141b2d] border-b border-slate-800/60",
+      card: "bg-[#141b2d] border border-slate-800/60",
+      cardNoBorders: "bg-[#141b2d]",
+      textTitle: "text-white",
+      textMuted: "text-slate-400",
+      textSubTitle: "text-xs text-slate-400",
+      borderAccent: "border-l-4 border-l-amber-500/80",
+      input: "bg-slate-900/60 border border-slate-800 text-slate-100 placeholder:text-slate-500 focus:border-indigo-500/60",
+      buttonSecondary: "bg-[#0b0f19] border border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white",
+      pillActive: "bg-indigo-650 text-white shadow-md border-transparent",
+      pillInactive: "bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-slate-800/50",
+      tableHeader: "bg-[#18233c] text-slate-400 border-b border-slate-800/60",
+      tableRowDivider: "divide-y divide-slate-800/60",
+      tableRowHover: "hover:bg-slate-900/30",
+      trxBg: "bg-slate-900/60 border border-slate-800/60 text-teal-400 font-extrabold",
+      badgePending: "text-amber-400 bg-amber-500/10 border border-amber-500/20",
+      badgeApproved: "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20",
+      badgeDeclined: "text-rose-400 bg-rose-500/10 border border-rose-500/20",
+      modalBg: "bg-[#141b2d] border border-slate-800/80",
+      modalHeader: "bg-slate-900/40 border-b border-slate-800/60",
+      modalFooter: "border-t border-slate-800/60",
+      footer: "bg-[#141b2d] border-t border-slate-800/60 text-slate-500"
+    },
+    sepia: {
+      root: "bg-[#f5efe4] text-[#4d4538]",
+      header: "bg-[#eae2cf] border-b border-[#dacfae]",
+      card: "bg-[#eae2cf] border border-[#dacfae]",
+      cardNoBorders: "bg-[#eae2cf]",
+      textTitle: "text-[#2b251a]",
+      textMuted: "text-[#7a6f58]",
+      textSubTitle: "text-xs text-[#7a6f58]",
+      borderAccent: "border-l-4 border-l-[#caa87a]",
+      input: "bg-[#faf7f0] border border-[#dacfae] text-[#2b251a] placeholder-[#9c9078] focus:border-[#a67c48]",
+      buttonSecondary: "bg-[#f5efe4] border border-[#dacfae] text-[#554a3a] hover:bg-[#eae2cf] hover:text-[#2b251a]",
+      pillActive: "bg-[#ab8452] text-white shadow-md border-transparent",
+      pillInactive: "bg-[#faf7f0] text-[#7a6f58] hover:text-[#2b251a] border border-[#dacfae]",
+      tableHeader: "bg-[#decfae] text-[#554a3a] border-b border-[#cdbda2]",
+      tableRowDivider: "divide-y divide-[#dacfae]",
+      tableRowHover: "hover:bg-[#eae2cf]/55",
+      trxBg: "bg-[#faf7f0] border border-[#dacfae] text-[#8e5c1d] font-bold",
+      badgePending: "text-[#aa6612] bg-[#fdfaf2] border border-[#e8caa2]",
+      badgeApproved: "text-[#1e6b36] bg-[#eef7f0] border border-[#bee2c9]",
+      badgeDeclined: "text-[#b22a27] bg-[#fdf4f4] border border-[#f5c2c2]",
+      modalBg: "bg-[#eae2cf] border border-[#dacfae]",
+      modalHeader: "bg-[#decfae]/40 border-b border-[#dacfae]",
+      modalFooter: "border-t border-[#dacfae]",
+      footer: "bg-[#eae2cf] border-t border-[#dacfae] text-[#7a6f58]"
+    },
+    sage: {
+      root: "bg-[#0b100d] text-[#add4be]",
+      header: "bg-[#131b17] border-b border-[#1f2d26]",
+      card: "bg-[#131b17] border border-[#1f2d26]",
+      cardNoBorders: "bg-[#131b17]",
+      textTitle: "text-[#d1edd9]",
+      textMuted: "text-[#628c74]",
+      textSubTitle: "text-xs text-[#628c74]",
+      borderAccent: "border-l-4 border-l-[#3a7356]/80",
+      input: "bg-[#0f1412] border border-[#1f2d26] text-[#d1edd9] placeholder-[#385945] focus:border-[#48996b]/60",
+      buttonSecondary: "bg-[#0b100d] border border-[#1f2d26] text-[#add4be] hover:bg-[#1a2520] hover:text-white",
+      pillActive: "bg-[#2d5c43] text-white shadow-md border-transparent",
+      pillInactive: "bg-[#0f1412] text-[#628c74] hover:text-[#add4be] border border-[#1f2d26]",
+      tableHeader: "bg-[#1a2520] text-[#7eb393] border-b border-[#1f2d26]",
+      tableRowDivider: "divide-y divide-[#1f2d26]",
+      tableRowHover: "hover:bg-[#1a2520]/40",
+      trxBg: "bg-[#0f1412] border border-[#1f2d26] text-[#42b87f] font-bold",
+      badgePending: "text-amber-300 bg-amber-500/10 border border-amber-500/20",
+      badgeApproved: "text-emerald-300 bg-emerald-500/15 border border-emerald-500/20",
+      badgeDeclined: "text-rose-300 bg-rose-500/10 border border-rose-500/20",
+      modalBg: "bg-[#131b17] border border-[#1f2d26]",
+      modalHeader: "bg-[#1a2520]/40 border-b border-[#1f2d26]",
+      modalFooter: "border-t border-[#1f2d26]",
+      footer: "bg-[#131b17] border-t border-[#1f2d26] text-[#4a6b57]"
+    }
+  };
+
+  const activeTheme = themeStyles[comfortTheme];
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState('');
   const [username, setUsername] = useState('');
@@ -346,21 +440,21 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     switch (status) {
       case 'approved':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200">
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${activeTheme.badgeApproved}`}>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
             Approved
           </span>
         );
       case 'declined':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200">
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${activeTheme.badgeDeclined}`}>
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
             Refused
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200">
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${activeTheme.badgePending}`}>
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
             Pending
           </span>
@@ -382,28 +476,54 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   });
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans" id="admin-root">
+    <div className={`min-h-screen ${activeTheme.root} flex flex-col font-sans transition-all duration-300`} id="admin-root">
       
       {/* Top Admin Header Bar */}
-      <header className="bg-slate-950 border-b border-slate-800 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+      <header className={`${activeTheme.header} px-6 py-4 flex flex-wrap justify-between items-center gap-4 transition-all duration-300`}>
         <div className="flex items-center gap-3">
-          <div className="bg-red-600 p-2 rounded-lg text-white">
-            <Lock className="w-5 h-5" />
+          <div className="bg-slate-800/10 p-2 rounded-lg text-indigo-400 border border-slate-700/20">
+            <Lock className="w-5 h-5 text-indigo-400" />
           </div>
           <div>
             <h1 className="text-lg md:text-xl font-bold tracking-tight text-white flex items-center gap-2">
-              IELTS Revolution <span className="text-red-500 text-xs px-2 py-0.5 bg-red-500/10 rounded border border-red-500/20">Admin Base</span>
+              <span className={activeTheme.textTitle}>IELTS Revolution</span> <span className="text-indigo-400 text-xs px-2 py-0.5 bg-indigo-500/10 rounded border border-indigo-500/20">Admin Base</span>
             </h1>
-            <p className="text-xs text-slate-400">Enrollment & Payment Verification Window</p>
+            <p className={`text-xs ${activeTheme.textMuted}`}>Enrollment & Payment Verification Window</p>
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center flex-wrap gap-3">
+          {/* Eye Comfort Mode Indicator */}
+          <div className="flex items-center gap-1 bg-black/10 p-1 rounded-lg border border-slate-800/20">
+            <span className={`text-[9px] uppercase font-bold tracking-wider px-2 ${activeTheme.textMuted} hidden sm:inline`}>👁️ eye comfort:</span>
+            <button
+              onClick={() => handleThemeChange('slate')}
+              className={`px-2 py-1 rounded text-[10px] font-bold transition-all ${comfortTheme === 'slate' ? 'bg-indigo-600 text-white shadow-sm' : `${activeTheme.textMuted} hover:text-indigo-450`}`}
+              title="Soothing Slate Dark"
+            >
+              Slate
+            </button>
+            <button
+              onClick={() => handleThemeChange('sepia')}
+              className={`px-2 py-1 rounded text-[10px] font-bold transition-all ${comfortTheme === 'sepia' ? 'bg-[#ab8452] text-white shadow-sm' : `${activeTheme.textMuted} hover:text-[#2b251a]`}`}
+              title="Warm Sepia Soft"
+            >
+              Sepia
+            </button>
+            <button
+              onClick={() => handleThemeChange('sage')}
+              className={`px-2 py-1 rounded text-[10px] font-bold transition-all ${comfortTheme === 'sage' ? 'bg-emerald-700 text-white shadow-sm' : `${activeTheme.textMuted} hover:text-emerald-400`}`}
+              title="Calming Sage"
+            >
+              Sage
+            </button>
+          </div>
+
           <button 
             onClick={onClose}
-            className="flex items-center gap-1 px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900 text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition cursor-pointer"
+            className={`flex items-center gap-1 px-3.5 py-1.5 rounded-lg border ${activeTheme.buttonSecondary} text-xs font-medium transition cursor-pointer`}
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
+            <ArrowLeft className="w-3.5 h-3.5 text-indigo-400" />
             Back to Landing Page
           </button>
           {isLoggedIn && (
@@ -424,13 +544,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
         {!isLoggedIn ? (
           /* Sleek Administration Login Form */
           <div className="max-w-md mx-auto my-12 md:my-20">
-            <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl relative">
+            <div className={`${activeTheme.card} rounded-2xl p-6 md:p-8 shadow-2xl relative transition-all duration-300`}>
               <div className="text-center space-y-2 mb-6">
-                <div className="inline-flex p-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 mb-2">
+                <div className="inline-flex p-3 rounded-full bg-indigo-500/10 border border-indigo-505/20 text-indigo-400 mb-2">
                   <Lock className="w-6 h-6" />
                 </div>
-                <h2 className="text-xl font-extrabold text-white">Admin Login Portal</h2>
-                <p className="text-xs text-slate-400">Please login to verify and approve payments</p>
+                <h2 className={`text-xl font-extrabold ${activeTheme.textTitle}`}>Admin Login Portal</h2>
+                <p className={`text-xs ${activeTheme.textMuted}`}>Please login to verify and approve payments</p>
                 
                 {/* Auto Fill Quick Button */}
                 <div className="pt-1">
@@ -440,7 +560,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                       setUsername('admin');
                       setPassword('admin123');
                     }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-200 bg-slate-800 hover:bg-slate-700 active:scale-95 transition-all text-center cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-200 bg-slate-800/70 hover:bg-slate-750 active:scale-95 transition-all text-center cursor-pointer border border-slate-700/30"
                   >
                     ⚡ Auto-fill Login Info (admin / admin123)
                   </button>
@@ -456,14 +576,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-300">Username</label>
+                  <label className={`block text-xs font-bold ${activeTheme.textMuted}`}>Username</label>
                   <div className="relative">
                     <span className="absolute left-3 top-3 text-slate-500">
                       <User className="w-4 h-4" />
                     </span>
                     <input 
                       type="text"
-                      className="w-full pl-9 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-red-500 transition-all font-mono"
+                      className={`w-full pl-9 pr-4 py-2.5 ${activeTheme.input} rounded-lg text-sm transition-all font-mono`}
                       placeholder="Enter Username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
@@ -472,14 +592,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-300">Password</label>
+                  <label className={`block text-xs font-bold ${activeTheme.textMuted}`}>Password</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-3 text-slate-500">
+                    <span className="absolute left-3 top-3 text-slate-550">
                       <Lock className="w-4 h-4" />
                     </span>
                     <input 
                       type={showPassword ? "text" : "password"}
-                      className="w-full pl-9 pr-10 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-red-500 transition-all font-mono"
+                      className={`w-full pl-9 pr-10 py-2.5 ${activeTheme.input} rounded-lg text-sm transition-all font-mono`}
                       placeholder="Enter Password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -487,7 +607,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                     <button 
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 text-slate-500 hover:text-slate-300"
+                      className="absolute right-3 top-3 text-slate-500 hover:text-slate-350"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -497,7 +617,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 <button 
                   type="submit"
                   disabled={isLoggingIn}
-                  className="w-full bg-red-600 hover:bg-red-500 disabled:bg-slate-800 text-white font-bold py-3 rounded-lg text-xs tracking-wider uppercase transition shadow-lg mt-4 flex items-center justify-center gap-1.5"
+                  className="w-full bg-indigo-650 hover:bg-indigo-600 disabled:bg-slate-800 text-white font-bold py-3 rounded-lg text-xs tracking-wider uppercase transition shadow-lg mt-4 flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   {isLoggingIn ? (
                     <>
@@ -510,9 +630,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 </button>
               </form>
 
-              <div className="mt-8 border-t border-slate-800 pt-4 text-center space-y-1">
-                <p className="text-[10px] text-slate-400 font-medium">Quick Login: admin / admin123</p>
-                <p className="text-[9px] text-slate-500 font-mono">Environment Credentials: administrator / Maailulp1$%</p>
+              <div className={`mt-8 border-t ${activeTheme.border} pt-4 text-center space-y-1`}>
+                <p className={`text-[10px] ${activeTheme.textMuted} font-medium`}>Quick Login: admin / admin123</p>
+                <p className={`text-[9px] ${activeTheme.textMuted} font-mono opacity-80`}>Environment Credentials: administrator / Maailulp1$%</p>
               </div>
             </div>
           </div>
@@ -523,42 +643,42 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
             {/* Business Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               
-              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 md:p-5 flex flex-col justify-between">
-                <span className="text-slate-400 text-xs font-semibold">Total Revenue (Approved)</span>
+              <div className={`${activeTheme.card} rounded-2xl p-4 md:p-5 flex flex-col justify-between transition-all duration-300`}>
+                <span className={`${activeTheme.textMuted} text-xs font-semibold`}>Total Revenue (Approved)</span>
                 <div className="flex items-baseline mt-2 gap-1 flex-wrap">
-                  <span className="text-2xl md:text-3xl font-extrabold text-amber-500 font-sans">৳ {approvedRevenue.toLocaleString('en-US')}</span>
+                  <span className={`text-2xl md:text-3xl font-extrabold ${comfortTheme === 'sepia' ? 'text-[#8e5c1d]' : 'text-amber-400'} font-sans`}>৳ {approvedRevenue.toLocaleString('en-US')}</span>
                 </div>
-                <span className="text-[10px] text-emerald-500 font-bold mt-1">✓ {approvedCount} Payments Verified</span>
+                <span className="text-[10px] text-[rgba(52,211,153,0.95)] font-bold mt-1">✓ {approvedCount} Payments Verified</span>
               </div>
 
-              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 md:p-5 flex flex-col justify-between">
-                <span className="text-slate-400 text-xs font-semibold">Total Requests</span>
+              <div className={`${activeTheme.card} rounded-2xl p-4 md:p-5 flex flex-col justify-between transition-all duration-300`}>
+                <span className={`${activeTheme.textMuted} text-xs font-semibold`}>Total Requests</span>
                 <div className="flex items-baseline mt-2">
-                  <span className="text-2xl md:text-3xl font-extrabold text-white font-mono">{totalSubmissions}</span>
+                  <span className={`text-2xl md:text-3xl font-extrabold ${activeTheme.textTitle} font-mono`}>{totalSubmissions}</span>
                 </div>
-                <span className="text-[10px] text-slate-500 mt-1">End-user submissions in list</span>
+                <span className={`text-[10px] ${activeTheme.textMuted} mt-1 opacity-70`}>End-user submissions in list</span>
               </div>
 
-              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 md:p-5 flex flex-col justify-between border-l-4 border-l-amber-500">
-                <span className="text-slate-400 text-xs font-semibold">Pending Verification</span>
+              <div className={`${activeTheme.card} ${activeTheme.borderAccent} rounded-2xl p-4 md:p-5 flex flex-col justify-between transition-all duration-300`}>
+                <span className={`${activeTheme.textMuted} text-xs font-semibold`}>Pending Verification</span>
                 <div className="flex items-baseline mt-2">
-                  <span className="text-2xl md:text-3xl font-extrabold text-amber-400 font-mono">{pendingCount}</span>
+                  <span className={`text-2xl md:text-3xl font-extrabold ${comfortTheme === 'sepia' ? 'text-[#ab8452]' : 'text-amber-400'} font-mono`}>{pendingCount}</span>
                 </div>
-                <span className="text-[10px] text-amber-400 font-medium mt-1 animate-pulse">● Awaiting check</span>
+                <span className={`text-[10px] ${comfortTheme === 'sepia' ? 'text-[#ab8452]' : 'text-amber-400/90'} font-medium mt-1 animate-pulse`}>● Awaiting check</span>
               </div>
 
-              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 md:p-5 flex flex-col justify-between">
-                <span className="text-slate-400 text-xs font-semibold">Rejected Requests</span>
+              <div className={`${activeTheme.card} rounded-2xl p-4 md:p-5 flex flex-col justify-between transition-all duration-300`}>
+                <span className={`${activeTheme.textMuted} text-xs font-semibold`}>Rejected Requests</span>
                 <div className="flex items-baseline mt-2">
-                  <span className="text-2xl md:text-3xl font-extrabold text-rose-500 font-mono">{declinedCount}</span>
+                  <span className={`text-2xl md:text-3xl font-extrabold ${comfortTheme === 'sepia' ? 'text-[#b22a27]' : 'text-rose-450/90'} font-mono`}>{declinedCount}</span>
                 </div>
-                <span className="text-[10px] text-slate-500 mt-1">Trash/Fake TxID filter info</span>
+                <span className={`text-[10px] ${activeTheme.textMuted} mt-1 opacity-70`}>Trash/Fake TxID filter info</span>
               </div>
 
             </div>
 
             {/* Main Action Bar, Filter and Searches */}
-            <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className={`${activeTheme.card} rounded-2xl p-4 flex flex-col md:flex-row justify-between items-center gap-4 transition-all duration-300`}>
               
               {/* Left Search input */}
               <div className="relative w-full md:max-w-md">
@@ -568,7 +688,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 <input 
                   type="text"
                   placeholder="Search by name, phone or TrxID..."
-                  className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-red-500 transition-all"
+                  className={`w-full pl-9 pr-4 py-2 ${activeTheme.input} rounded-lg text-xs placeholder:text-slate-500 focus:outline-none transition-all`}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -576,17 +696,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
               {/* Right Filter status options */}
               <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
-                <span className="text-xs text-slate-400 font-semibold mr-1 flex items-center gap-1">
+                <span className={`text-xs ${activeTheme.textMuted} font-semibold mr-1 flex items-center gap-1`}>
                   <Filter className="w-3.5 h-3.5" />
                   Filter Status:
                 </span>
                 
                 <button
                   onClick={() => setStatusFilter('all')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     statusFilter === 'all' 
-                      ? 'bg-red-600 text-white' 
-                      : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                      ? activeTheme.pillActive
+                      : activeTheme.pillInactive
                   }`}
                 >
                   All ({totalSubmissions})
@@ -594,10 +714,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
                 <button
                   onClick={() => setStatusFilter('pending')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
                     statusFilter === 'pending' 
-                      ? 'bg-amber-600 text-white' 
-                      : 'bg-slate-900 text-slate-400 hover:text-amber-400 border border-slate-800'
+                      ? (comfortTheme === 'sepia' ? 'bg-[#ab8452] text-white shadow-md' : 'bg-amber-600/90 text-white shadow-md')
+                      : activeTheme.pillInactive
                   }`}
                 >
                   Pending ({pendingCount})
@@ -605,10 +725,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
                 <button
                   onClick={() => setStatusFilter('approved')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
                     statusFilter === 'approved' 
-                      ? 'bg-emerald-600 text-white' 
-                      : 'bg-slate-900 text-slate-400 hover:text-emerald-400 border border-slate-800'
+                      ? (comfortTheme === 'sepia' ? 'bg-[#1e6b36] text-white shadow-md' : 'bg-emerald-650 text-white shadow-md')
+                      : activeTheme.pillInactive
                   }`}
                 >
                   Approved ({approvedCount})
@@ -616,10 +736,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
                 <button
                   onClick={() => setStatusFilter('declined')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
                     statusFilter === 'declined' 
-                      ? 'bg-rose-600 text-white' 
-                      : 'bg-slate-900 text-slate-400 hover:text-rose-400 border border-slate-800'
+                      ? (comfortTheme === 'sepia' ? 'bg-[#b22a27] text-white shadow-md' : 'bg-rose-650 text-white shadow-md')
+                      : activeTheme.pillInactive
                   }`}
                 >
                   Refused ({declinedCount})
@@ -627,20 +747,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
                 <button
                   onClick={openAddModal}
-                  className="px-3 py-1.5 bg-red-600 hover:bg-red-550 text-white text-xs font-bold rounded-lg transition active:scale-95 flex items-center gap-1 cursor-pointer"
+                  className={`px-3 py-1.5 ${comfortTheme === 'sepia' ? 'bg-[#ab8452] hover:bg-[#a67c48]' : 'bg-indigo-600 hover:bg-indigo-550'} text-white text-xs font-bold rounded-lg transition active:scale-95 flex items-center gap-1 cursor-pointer shadow-md`}
                   title="Add new payment record manually"
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  New Payment
+                  <Plus className="w-3.5 h-3.5" /> Add Payment
                 </button>
 
                 <button 
                   onClick={() => fetchPayments()}
                   disabled={isLoading}
-                  className="p-2 bg-slate-900 text-slate-400 hover:text-slate-200 rounded-lg border border-slate-800 transition active:scale-95 disabled:opacity-50"
+                  className="p-2 bg-black/10 hover:bg-black/20 text-slate-400 hover:text-slate-205 rounded-lg border border-slate-705/10 transition active:scale-95 disabled:opacity-50"
                   title="Refresh list"
                 >
-                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin text-red-500' : ''}`} />
+                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin text-indigo-400' : ''}`} />
                 </button>
               </div>
 
@@ -656,25 +775,25 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
             {/* List / Table of payment entries */}
             {isLoading && payments.length === 0 ? (
-              <div className="text-center py-20 bg-slate-950 border border-slate-800 rounded-3xl space-y-3">
-                <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p className="text-sm text-slate-400 font-medium">Loading payments list...</p>
+              <div className={`text-center py-20 ${activeTheme.card} border ${activeTheme.border} rounded-3xl space-y-3`}>
+                <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <p className={`text-sm ${activeTheme.textMuted} font-medium`}>Loading payments list...</p>
               </div>
             ) : filteredPayments.length === 0 ? (
-              <div className="text-center py-20 bg-slate-950 border border-slate-800 rounded-3xl">
+              <div className={`text-center py-20 ${activeTheme.card} border ${activeTheme.border} rounded-3xl`}>
                 <Filter className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-                <h4 className="text-base font-bold text-slate-300">No payment details found</h4>
-                <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                <h4 className={`text-base font-bold ${activeTheme.textTitle}`}>No payment details found</h4>
+                <p className={`text-xs ${activeTheme.textMuted} mt-1 max-w-sm mx-auto`}>
                   There are no payment records under the selected filter or no search query matched.
                 </p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-4 font-sans">
                 
                 {/* Desktop view: Structured Grid Table */}
-                <div className="hidden lg:block bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden">
+                <div className={`hidden lg:block ${activeTheme.card} border ${activeTheme.border} rounded-2xl overflow-hidden`}>
                   <table className="w-full text-left text-xs border-collapse">
-                    <thead className="bg-slate-900 border-b border-slate-800 text-slate-400 uppercase font-bold text-[10px] tracking-wider">
+                    <thead className={`${activeTheme.tableHeader} border-b ${activeTheme.border} ${activeTheme.textMuted} uppercase font-bold text-[10px] tracking-wider`}>
                       <tr>
                         <th className="px-5 py-4">Date</th>
                         <th className="px-5 py-4">Student Info</th>
@@ -685,20 +804,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                         <th className="px-5 py-4 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800 text-slate-300">
+                    <tbody className={`divide-y ${activeTheme.border} ${activeTheme.textTitle}`}>
                       {filteredPayments.map((p) => (
-                        <tr key={p.id} className="hover:bg-slate-900/50 transition">
+                        <tr key={p.id} className={`${activeTheme.tableRow} transition`}>
                           
                           {/* Date timestamp */}
                           <td className="px-5 py-4 whitespace-nowrap">
-                            <div className="font-semibold text-slate-300">
+                            <div className={`font-semibold ${activeTheme.textTitle}`}>
                               {new Date(p.timestamp).toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',
                               })}
                             </div>
-                            <div className="text-[10px] text-slate-500 font-mono mt-1">
+                            <div className={`text-[10px] ${activeTheme.textMuted} font-mono mt-1`}>
                               {new Date(p.timestamp).toLocaleTimeString('en-US', {
                                 hour: '2-digit',
                                 minute: '2-digit',
@@ -709,32 +828,32 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
                           {/* Student Details */}
                           <td className="px-5 py-4">
-                            <div className="font-bold text-sm text-white">{p.studentName}</div>
-                            <div className="text-[11px] text-slate-500 mt-0.5">{p.studentEmail}</div>
+                            <div className={`font-bold text-sm ${activeTheme.textTitle}`}>{p.studentName}</div>
+                            <div className={`text-[11px] ${activeTheme.textMuted} mt-0.5`}>{p.studentEmail}</div>
                           </td>
 
                           {/* Plan and Price */}
                           <td className="px-5 py-4 whitespace-nowrap">
-                            <span className="text-white font-semibold text-xs py-0.5 px-2.5 rounded bg-slate-800 leading-tight">
+                            <span className={`font-semibold text-xs py-0.5 px-2.5 rounded ${activeTheme.badgePlan} leading-tight border border-slate-700/10`}>
                               {p.planName}
                             </span>
-                            <div className="text-amber-500 font-bold font-sans mt-1">{p.planPrice}</div>
+                            <div className="text-amber-500 font-bold font-sans mt-0.5">{p.planPrice}</div>
                           </td>
 
                           {/* Sender Phone */}
-                          <td className="px-5 py-4 whitespace-nowrap">
+                          <td className="px-5 py-4 whitespace-nowrap font-mono">
                             <a 
                               href={`tel:${p.phone}`} 
-                              className="inline-flex items-center gap-1 text-slate-300 hover:text-white hover:underline font-mono"
+                              className={`inline-flex items-center gap-1 ${activeTheme.textTitle} hover:underline`}
                             >
-                              <PhoneCall className="w-3 h-3 text-slate-500" />
+                              <PhoneCall className={`w-3 h-3 ${activeTheme.textMuted}`} />
                               {p.phone}
                             </a>
                           </td>
 
                           {/* Transaction ID */}
-                          <td className="px-5 py-4 whitespace-nowrap">
-                            <div className="text-red-400 font-extrabold font-mono text-sm tracking-wider bg-slate-900 border border-slate-800 rounded px-2.5 py-1 select-all w-max uppercase">
+                          <td className="px-5 py-4 whitespace-nowrap font-mono">
+                            <div className={`text-teal-500 font-extrabold text-xs tracking-wider ${activeTheme.badgeTrx} border border-slate-800/10 rounded px-2.5 py-1 select-all w-max uppercase`}>
                               {p.transactionId}
                             </div>
                           </td>
@@ -747,13 +866,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                           {/* Quick Admin Action Controls */}
                           <td className="px-5 py-4 whitespace-nowrap text-right">
                             {isUpdatingId === p.id ? (
-                              <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin ml-auto"></div>
+                              <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin ml-auto"></div>
                             ) : (
                               <div className="inline-flex items-center gap-2">
                                 {p.status !== 'approved' && (
                                   <button 
                                     onClick={() => handleStatusChange(p.id, 'approved')}
-                                    className="px-2.5 py-1.5 bg-emerald-600/10 text-emerald-400 hover:bg-emerald-600 hover:text-white text-xs font-bold rounded-lg border border-emerald-500/20 transition cursor-pointer"
+                                    className="px-2.5 py-1.5 bg-emerald-600/15 text-emerald-500 hover:bg-emerald-600 hover:text-white text-xs font-bold rounded-lg border border-emerald-500/20 transition cursor-pointer"
                                     title="Approve payment"
                                   >
                                     Approve ✅
@@ -762,7 +881,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                                 {p.status !== 'declined' && (
                                   <button 
                                     onClick={() => handleStatusChange(p.id, 'declined')}
-                                    className="px-2.5 py-1.5 bg-rose-600/10 text-rose-400 hover:bg-rose-600 hover:text-white text-xs font-bold rounded-lg border border-rose-500/20 transition cursor-pointer"
+                                    className="px-2.5 py-1.5 bg-rose-600/15 text-rose-500 hover:bg-rose-650 hover:text-white text-xs font-bold rounded-lg border border-rose-500/20 transition cursor-pointer"
                                     title="Reject payment"
                                   >
                                     Reject ❌
@@ -771,7 +890,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                                 {p.status !== 'pending' && (
                                   <button 
                                     onClick={() => handleStatusChange(p.id, 'pending')}
-                                    className="p-1 px-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 text-[10px] font-semibold rounded border border-slate-800 transition cursor-pointer"
+                                    className="p-1 px-1.5 bg-slate-805 hover:bg-slate-700 text-slate-350 hover:text-slate-100 text-[10px] font-semibold rounded border border-slate-700 transition cursor-pointer"
                                     title="Mark pending"
                                   >
                                     Mark Pending
@@ -781,7 +900,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                                 {/* Complete Edit and Delete controls */}
                                 <button 
                                   onClick={() => openEditModal(p)}
-                                  className="p-1.5 bg-slate-800 hover:bg-blue-600 hover:text-white text-slate-400 rounded-lg border border-slate-700 transition cursor-pointer"
+                                  className="p-1.5 bg-slate-810 hover:bg-indigo-650 hover:text-white text-slate-400 rounded-lg border border-slate-700/60 transition cursor-pointer"
                                   title="Edit record"
                                 >
                                   <Edit className="w-3.5 h-3.5" />
@@ -792,7 +911,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                                 ) : (
                                   <button 
                                     onClick={() => handleDeletePayment(p.id)}
-                                    className="p-1.5 bg-slate-800 hover:bg-rose-600 hover:text-white text-slate-500 hover:text-white rounded-lg border border-slate-700 transition cursor-pointer"
+                                    className="p-1.5 bg-slate-810 hover:bg-rose-600 hover:text-white text-rose-505 rounded-lg border border-slate-700/60 transition cursor-pointer"
                                     title="Delete record"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -811,50 +930,50 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 {/* Mobile / Tablet view: Stacked Elegant Cards */}
                 <div className="grid md:grid-cols-2 gap-4 lg:hidden">
                   {filteredPayments.map((p) => (
-                    <div key={p.id} className="bg-slate-950 border border-slate-850 p-5 rounded-2xl space-y-4 hover:border-slate-700 transition">
+                    <div key={p.id} className={`${activeTheme.card} border ${activeTheme.border} p-5 rounded-2xl space-y-4 hover:border-slate-705/85 transition duration-300`}>
                       <div className="flex justify-between items-start">
                         <div>
-                          <div className="text-[10px] text-slate-500 font-semibold font-mono">
+                          <div className={`text-[10px] ${activeTheme.textMuted} font-semibold font-mono`}>
                             {new Date(p.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })} • {new Date(p.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                           </div>
-                          <h4 className="text-base font-bold text-white mt-1">{p.studentName}</h4>
-                          <span className="text-xs text-slate-500">{p.studentEmail}</span>
+                          <h4 className={`text-base font-bold ${activeTheme.textTitle} mt-1`}>{p.studentName}</h4>
+                          <span className={`text-xs ${activeTheme.textMuted}`}>{p.studentEmail}</span>
                         </div>
                         {getStatusBadge(p.status)}
                       </div>
 
-                      <div className="h-px bg-slate-900"></div>
+                      <div className={`h-px ${activeTheme.border} opacity-50`}></div>
 
                       <div className="grid grid-cols-2 gap-3 text-xs">
                         <div>
-                          <span className="text-slate-500 block">Plan</span>
-                          <span className="text-slate-300 font-bold">{p.planName}</span>
+                          <span className={`${activeTheme.textMuted} block`}>Plan</span>
+                          <span className={`${activeTheme.textTitle} font-bold`}>{p.planName}</span>
                         </div>
                         <div>
-                          <span className="text-slate-500 block">Price</span>
-                          <span className="text-amber-500 font-extrabold font-sans">{p.planPrice}</span>
+                          <span className={`${activeTheme.textMuted} block`}>Price</span>
+                          <span className="text-amber-505 font-extrabold font-sans">{p.planPrice}</span>
                         </div>
                         <div>
-                          <span className="text-slate-500 block">Sender Phone</span>
-                          <a href={`tel:${p.phone}`} className="text-slate-300 font-mono flex items-center gap-1 hover:underline">
-                            <PhoneCall className="w-3 h-3 text-slate-500" />
+                          <span className={`${activeTheme.textMuted} block`}>Sender Phone</span>
+                          <a href={`tel:${p.phone}`} className={`${activeTheme.textTitle} font-mono flex items-center gap-1 hover:underline`}>
+                            <PhoneCall className={`w-3 h-3 ${activeTheme.textMuted}`} />
                             {p.phone}
                           </a>
                         </div>
                         <div>
-                          <span className="text-slate-500 block">TrxID</span>
-                          <span className="text-red-400 font-extrabold font-mono select-all uppercase">{p.transactionId}</span>
+                          <span className={`${activeTheme.textMuted} block`}>TrxID</span>
+                          <span className="text-teal-500 font-extrabold font-mono select-all uppercase">{p.transactionId}</span>
                         </div>
                       </div>
 
-                      <div className="h-px bg-slate-900"></div>
+                      <div className={`h-px ${activeTheme.border} opacity-50`}></div>
 
                       <div className="flex justify-between items-center gap-2 flex-wrap">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[10px] text-slate-500 font-mono">ID: {p.id}</span>
+                          <span className={`text-[10px] ${activeTheme.textMuted} font-mono`}>ID: {p.id}</span>
                           <button 
                             onClick={() => openEditModal(p)}
-                            className="p-1.5 bg-slate-900 border border-slate-800 hover:bg-blue-600 hover:text-white text-slate-400 rounded transition text-xs flex items-center gap-1 cursor-pointer"
+                            className="p-1.5 bg-black/10 hover:bg-black/20 text-slate-400 rounded transition text-xs flex items-center gap-1 cursor-pointer"
                             title="Edit record"
                           >
                             <Edit className="w-3 h-3" />
@@ -864,7 +983,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                           ) : (
                             <button 
                               onClick={() => handleDeletePayment(p.id)}
-                              className="p-1.5 bg-slate-900 border border-slate-800 hover:bg-rose-600 hover:text-white text-slate-500 hover:text-white rounded transition text-xs flex items-center gap-1 cursor-pointer"
+                              className="p-1.5 bg-black/10 hover:bg-rose-600 hover:text-white text-slate-500 hover:text-white rounded transition text-xs flex items-center gap-1 cursor-pointer"
                               title="Delete record"
                             >
                               <Trash2 className="w-3 h-3" />
@@ -873,13 +992,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                         </div>
                         
                         {isUpdatingId === p.id ? (
-                          <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                          <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
                         ) : (
                           <div className="flex gap-1">
                             {p.status !== 'approved' && (
                               <button 
                                 onClick={() => handleStatusChange(p.id, 'approved')}
-                                className="px-2 py-1 bg-emerald-600/10 text-emerald-400 hover:bg-emerald-600 hover:text-white text-[11px] font-bold rounded border border-emerald-500/20 cursor-pointer"
+                                className="px-2 py-1 bg-emerald-600/15 text-emerald-500 hover:bg-emerald-600 hover:text-white text-[11px] font-bold rounded border border-emerald-500/20 cursor-pointer"
                               >
                                 Approve ✓
                               </button>
@@ -887,7 +1006,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                             {p.status !== 'declined' && (
                               <button 
                                 onClick={() => handleStatusChange(p.id, 'declined')}
-                                className="px-2 py-1 bg-rose-600/10 text-rose-400 hover:bg-rose-600 hover:text-white text-[11px] font-bold rounded border border-rose-500/20 cursor-pointer"
+                                className="px-2 py-1 bg-rose-600/15 text-rose-500 hover:bg-rose-650 hover:text-white text-[11px] font-bold rounded border border-rose-500/20 cursor-pointer"
                               >
                                 Reject ✕
                               </button>
@@ -895,7 +1014,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                             {p.status !== 'pending' && (
                               <button 
                                 onClick={() => handleStatusChange(p.id, 'pending')}
-                                className="px-1.5 py-1 bg-slate-900 text-slate-400 text-[10px] font-semibold rounded border border-slate-800 cursor-pointer"
+                                className="px-1.5 py-1 bg-slate-800 text-slate-400 text-[10px] font-semibold rounded border border-slate-700 cursor-pointer"
                               >
                                 Pending
                               </button>
@@ -915,18 +1034,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
       </main>
 
-      {/* Footer Branding Credit */}
-      <footer className="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500 font-sans mt-auto">
+       {/* Footer Branding Credit */}
+      <footer className={`${activeTheme.header} border-t ${activeTheme.border} py-4 text-center text-xs ${activeTheme.textMuted} font-sans mt-auto transition-all`}>
         <p>© {new Date().getFullYear()} IELTS REVOLUTION Administration Panel. All Rights Reserved.</p>
       </footer>
 
       {/* ADD / CREATE PAYMENT MODAL */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-805 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-scaleIn">
-            <div className="p-5 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Plus className="w-4 h-4 text-red-500" /> Add New Payment Record
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className={`${activeTheme.card} border ${activeTheme.border} rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-scaleIn animate-fadeIn`}>
+            <div className={`p-5 bg-black/10 border-b ${activeTheme.border} flex justify-between items-center`}>
+              <h3 className={`text-sm font-bold ${activeTheme.textTitle} flex items-center gap-2`}>
+                <Plus className="w-4 h-4 text-indigo-400" /> Add New Payment Record
               </h3>
               <button 
                 onClick={() => setShowAddModal(false)}
@@ -936,118 +1055,118 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               </button>
             </div>
 
-            <form onSubmit={handleCreatePayment} className="p-5 space-y-4">
+            <form onSubmit={handleCreatePayment} className="p-5 space-y-4 font-sans">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Student Name (English)</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Student Name (English)</label>
                   <input 
                     type="text" 
                     required 
                     value={formName} 
                     onChange={e => setFormName(e.target.value)}
                     placeholder="e.g. Abir Rahman"
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-100 placeholder:text-slate-500`}
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Your Name (Bangla field)</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Your Name (Bangla field)</label>
                   <input 
                     type="text" 
                     value={formNameBangla} 
                     onChange={e => setFormNameBangla(e.target.value)}
                     placeholder="e.g. আবির রহমান"
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-105 placeholder:text-slate-500`}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Mobile Number (Phone)</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Mobile Number (Phone)</label>
                   <input 
                     type="tel" 
                     required 
                     value={formPhone} 
                     onChange={e => setFormPhone(e.target.value)}
                     placeholder="e.g. 01712345678"
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100 font-mono"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-100 font-mono placeholder:text-slate-500`}
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Email Address (Email)</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Email Address (Email)</label>
                   <input 
                     type="email" 
                     value={formEmail} 
                     onChange={e => setFormEmail(e.target.value)}
                     placeholder="e.g. student@gmail.com"
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-100 placeholder:text-slate-500`}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Transaction ID (TrxID)</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Transaction ID (TrxID)</label>
                   <input 
                     type="text" 
                     required 
                     value={formTransactionId} 
                     onChange={e => setFormTransactionId(e.target.value)}
                     placeholder="e.g. BKX837D92"
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100 font-mono uppercase"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-100 font-mono uppercase placeholder:text-slate-500`}
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Status</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Status</label>
                   <select 
                     value={formStatus} 
                     onChange={e => setFormStatus(e.target.value as any)}
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-100`}
                   >
-                    <option value="pending">Pending</option>
-                    <option value="approved">Approved</option>
-                    <option value="declined">Declined</option>
+                    <option value="pending" className="bg-[#141b2d] text-slate-100">Pending</option>
+                    <option value="approved" className="bg-[#141b2d] text-slate-100">Approved</option>
+                    <option value="declined" className="bg-[#141b2d] text-slate-100">Declined</option>
                   </select>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Course Plan Name</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Course Plan Name</label>
                   <input 
                     type="text" 
                     required 
                     value={formPlanName} 
                     onChange={e => setFormPlanName(e.target.value)}
                     placeholder="Premium Live Batch"
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-100 placeholder:text-slate-550`}
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Course Fee</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Course Fee</label>
                   <input 
                     type="text" 
                     required 
                     value={formPlanPrice} 
                     onChange={e => setFormPlanPrice(e.target.value)}
                     placeholder="৳ 2,999"
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100 font-sans"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-100 font-sans placeholder:text-slate-550`}
                   />
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-800 flex justify-end gap-3">
+              <div className={`pt-4 border-t ${activeTheme.border} flex justify-end gap-3`}>
                 <button 
                   type="button" 
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold transition cursor-pointer"
+                  className={`px-4 py-2 ${comfortTheme === 'slate' ? 'bg-slate-800 hover:bg-slate-700 text-slate-100' : 'bg-black/10 hover:bg-black/20 text-slate-705'} rounded-lg text-xs font-bold transition cursor-pointer`}
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit" 
                   disabled={isSaving}
-                  className="px-5 py-2 bg-red-650 hover:bg-red-600 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-550 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
                 >
                   {isSaving ? <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span> : 'Create'}
                 </button>
@@ -1059,11 +1178,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
       {/* EDIT / UPDATE PAYMENT MODAL */}
       {showEditModal && editingRecord && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-805 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-scaleIn">
-            <div className="p-5 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Edit className="w-4 h-4 text-blue-500" /> Edit Payment Details
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className={`${activeTheme.card} border ${activeTheme.border} rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-scaleIn animate-fadeIn`}>
+            <div className={`p-5 bg-black/10 border-b ${activeTheme.border} flex justify-between items-center`}>
+              <h3 className={`text-sm font-bold ${activeTheme.textTitle} flex items-center gap-2`}>
+                <Edit className="w-4 h-4 text-indigo-400" /> Edit Payment Details
               </h3>
               <button 
                 onClick={() => {
@@ -1076,114 +1195,114 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               </button>
             </div>
 
-            <form onSubmit={handleUpdatePayment} className="p-5 space-y-4">
+            <form onSubmit={handleUpdatePayment} className="p-5 space-y-4 font-sans">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Student Name (English)</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Student Name (English)</label>
                   <input 
                     type="text" 
                     required 
                     value={formName} 
                     onChange={e => setFormName(e.target.value)}
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-105`}
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Your Name (Bangla field)</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Your Name (Bangla field)</label>
                   <input 
                     type="text" 
                     value={formNameBangla} 
                     onChange={e => setFormNameBangla(e.target.value)}
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-105`}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Mobile Number (Phone)</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Mobile Number (Phone)</label>
                   <input 
                     type="tel" 
                     required 
                     value={formPhone} 
                     onChange={e => setFormPhone(e.target.value)}
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100 font-mono"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-100 font-mono`}
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Email Address (Email)</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Email Address (Email)</label>
                   <input 
                     type="email" 
                     value={formEmail} 
                     onChange={e => setFormEmail(e.target.value)}
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-100`}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Transaction ID (TrxID)</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Transaction ID (TrxID)</label>
                   <input 
                     type="text" 
                     required 
                     value={formTransactionId} 
                     onChange={e => setFormTransactionId(e.target.value)}
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100 font-mono uppercase"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-101 font-mono uppercase`}
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Status</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Status</label>
                   <select 
                     value={formStatus} 
                     onChange={e => setFormStatus(e.target.value as any)}
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-100`}
                   >
-                    <option value="pending">Pending</option>
-                    <option value="approved">Approved</option>
-                    <option value="declined">Declined</option>
+                    <option value="pending" className="bg-[#141b2d] text-slate-100">Pending</option>
+                    <option value="approved" className="bg-[#141b2d] text-slate-100">Approved</option>
+                    <option value="declined" className="bg-[#141b2d] text-slate-100">Declined</option>
                   </select>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Course Plan Name</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Course Plan Name</label>
                   <input 
                     type="text" 
                     required 
                     value={formPlanName} 
                     onChange={e => setFormPlanName(e.target.value)}
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-100`}
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-[11px] font-bold text-slate-400">Course Fee</label>
+                  <label className={`block text-[11px] font-bold ${activeTheme.textMuted}`}>Course Fee</label>
                   <input 
                     type="text" 
                     required 
                     value={formPlanPrice} 
                     onChange={e => setFormPlanPrice(e.target.value)}
-                    className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg focus:outline-none focus:border-red-500 text-slate-100 font-sans"
+                    className={`w-full text-xs px-3 py-2 ${activeTheme.input} rounded-lg text-slate-100 font-sans`}
                   />
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-800 flex justify-end gap-3">
+              <div className={`pt-4 border-t ${activeTheme.border} flex justify-end gap-3`}>
                 <button 
                   type="button" 
                   onClick={() => {
                     setShowEditModal(false);
                     setEditingRecord(null);
                   }}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold transition cursor-pointer"
+                  className={`px-4 py-2 ${comfortTheme === 'slate' ? 'bg-slate-800 hover:bg-slate-700 text-slate-100' : 'bg-black/10 hover:bg-black/20 text-slate-705'} rounded-lg text-xs font-bold transition cursor-pointer`}
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit" 
                   disabled={isSaving}
-                  className="px-5 py-2 bg-blue-600 hover:bg-blue-550 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-550 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
                 >
                   {isSaving ? <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span> : 'Update'}
                 </button>
