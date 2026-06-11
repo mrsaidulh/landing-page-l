@@ -462,6 +462,22 @@ export default function App() {
           setTestOtpHint('');
         }
         setOtpCountdown(60);
+
+        // GTM Tracking (Lead creation initiated)
+        try {
+          (window as any).dataLayer = (window as any).dataLayer || [];
+          (window as any).dataLayer.push({
+            event: 'lead_initiated',
+            lead_details: {
+              name: bookingName,
+              course: bookingCourse,
+              target_band: bookingBand,
+              target_country: bookingCountry
+            }
+          });
+        } catch (gtmErr) {
+          console.warn("GTM lead error:", gtmErr);
+        }
       } else {
         setBookingError(data.error || 'ওটিপি পাঠাতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
       }
@@ -505,6 +521,24 @@ export default function App() {
       const data = await response.json();
       if (data.success) {
         setBookingSubmitted(true);
+
+        // GTM Tracking (Successful OTP Registration / Lead generation completed)
+        try {
+          (window as any).dataLayer = (window as any).dataLayer || [];
+          (window as any).dataLayer.push({
+            event: 'lead_completed',
+            lead_details: {
+              name: bookingName,
+              course: bookingCourse,
+              target_band: bookingBand,
+              target_country: bookingCountry,
+              phone: fullPhone,
+              email: bookingEmail
+            }
+          });
+        } catch (gtmErr) {
+          console.warn("GTM webinar tracking error:", gtmErr);
+        }
       } else {
         setBookingError(data.error || 'ভুল ওটিপি কোড! অনুগ্রহ করে আবার চেষ্টা করুন।');
       }
@@ -617,6 +651,22 @@ export default function App() {
     setPaymentTransaction('');
     setPaymentNameBangla('');
     setShowPaymentModal(true);
+
+    // GTM Tracking (Plan Selected)
+    try {
+      (window as any).dataLayer = (window as any).dataLayer || [];
+      (window as any).dataLayer.push({
+        event: 'plan_selected',
+        ecommerce: {
+          item_name: planName,
+          item_id: planType,
+          price: planPrice,
+          currency: 'BDT'
+        }
+      });
+    } catch (gtmErr) {
+      console.warn("GTM plan selection error:", gtmErr);
+    }
   };
 
   const handlePaymentSubmit = async (e: React.FormEvent) => {
@@ -656,6 +706,42 @@ export default function App() {
       const data = await response.json();
       if (response.ok && data.success) {
         setPaymentCompleted(true);
+
+        // GTM Tracking (Purchase / Payment Submitted successfully)
+        try {
+          const rawPrice = selectedPlan?.price || '2999';
+          // Convert Bengali numerals to English numerals
+          const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+          const normPrice = rawPrice.split('').map(char => {
+            const idx = banglaDigits.indexOf(char);
+            return idx !== -1 ? String(idx) : char;
+          }).join('');
+          
+          const numericPrice = parseFloat(normPrice.replace(/[^0-9.]/g, '')) || 2999;
+
+          (window as any).dataLayer = (window as any).dataLayer || [];
+          (window as any).dataLayer.push({
+            event: 'purchase',
+            ecommerce: {
+              transaction_id: paymentTransaction.toUpperCase().trim(),
+              value: numericPrice,
+              currency: 'BDT',
+              items: [{
+                item_name: selectedPlan?.name || "Premium Live Batch",
+                item_id: selectedPlan?.type || "live-premium",
+                price: numericPrice,
+                quantity: 1
+              }]
+            },
+            student_info: {
+              name: paymentNameBangla.trim(),
+              email: bookingEmail.trim() || "N/A",
+              phone: paymentPhone.trim()
+            }
+          });
+        } catch (gtmErr) {
+          console.warn("GTM payment tracking error:", gtmErr);
+        }
       } else {
         throw new Error(data.error || 'পেমেন্ট সাবমিট করতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
       }
