@@ -200,6 +200,9 @@ const TESTIMONIALS = [
   }
 ];
 
+// Set this to true to reactivate the "IELTS Writing Upgrader" section and its navigation header link
+const SHOW_UPGRADE_TOOL = false;
+
 export default function App() {
   const [showAdminView, setShowAdminView] = useState(false);
   const [copiedShare, setCopiedShare] = useState(false);
@@ -821,9 +824,11 @@ export default function App() {
 
           <nav className="hidden lg:flex space-x-8 text-sm font-medium">
             <a href="#features" className="hover:text-accent-red transition-all duration-200">ফিচারসমূহ</a>
-            <a href="#upgrade-tool" className="text-accent-gold hover:text-white flex items-center gap-1 transition-all">
-              <Zap className="w-3.5 h-3.5 text-accent-gold" /> রাইটিং আপগ্রেডার
-            </a>
+            {SHOW_UPGRADE_TOOL && (
+              <a href="#upgrade-tool" className="text-accent-gold hover:text-white flex items-center gap-1 transition-all">
+                <Zap className="w-3.5 h-3.5 text-accent-gold" /> রাইটিং আপগ্রেডার
+              </a>
+            )}
             <a href="#curriculum" className="hover:text-accent-red transition-all duration-200">কারিকুলাম</a>
             <a href="#eval-preview" className="hover:text-accent-red transition-all duration-200">লাইভ ইভ্যালুয়েশন</a>
             <a href="#pricing" className="hover:text-accent-red transition-all duration-200">ফি এবং এডমিশন</a>
@@ -1189,192 +1194,194 @@ export default function App() {
       </section>
 
       {/* Brand New: Interactive Writing Band Upgrade Masterclass Simulator */}
-      <section id="upgrade-tool" className="py-16 bg-navy-secondary text-white relative">
-        <div className="container mx-auto px-4">
-          <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
-            <span className="text-accent-gold font-bold text-xs uppercase tracking-widest bg-accent-gold/10 px-3 py-1 rounded-full border border-accent-gold/20 flex items-center gap-1 w-max mx-auto">
-              <Zap className="w-3 h-3 text-accent-gold" /> Practice & Upgrade Simulator
-            </span>
-            <h2 className="text-2xl md:text-4xl font-bold">IELTS Writing Upgrader</h2>
-            <p className="text-slate-300 text-sm md:text-base">
-              নিচে যেকোনো একটি মডিউল বা টপিক সিলেক্ট করে দেখুন কিভাবে সাধারণ বাক্যগুলোকে প্রফেশনাল এবং হাই-স্কোরিং রাইটিং-এ পরিবর্তন করা যায়।
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-12 gap-8 items-start">
-            
-            {/* Topic Select Button Column */}
-            <div className="lg:col-span-4 space-y-3">
-              <p className="text-xs uppercase font-bold text-slate-400 tracking-wider">টপিক নির্বাচন করুন:</p>
-              {UPGRADE_SAMPLES.map((sample) => (
-                <button
-                  key={sample.id}
-                  onClick={() => {
-                    setSelectedSample(sample);
-                    setCustomResult(null);
-                  }}
-                  className={`w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-center justify-between ${
-                    selectedSample.id === sample.id 
-                    ? 'bg-accent-red border-accent-red text-white shadow-lg translate-x-2'
-                    : 'bg-navy-primary/60 border-slate-750 text-slate-300 hover:bg-navy-primary hover:text-white'
-                  }`}
-                  id={`sample-btn-${sample.id}`}
-                >
-                  <div className="space-y-1">
-                    <p className="text-[10px] text-white/75 font-semibold uppercase">{sample.topic}</p>
-                    <p className="font-bold text-sm sm:text-base">{sample.title}</p>
-                  </div>
-                  <ChevronRight className={`w-5 h-5 opacity-70 ${selectedSample.id === sample.id ? 'translate-x-1' : ''}`} />
-                </button>
-              ))}
-
-              {/* Try your own sentence quick box */}
-              <div className="bg-navy-primary/40 p-5 rounded-2xl border border-white/5 space-y-3 mt-6">
-                <p className="text-xs font-bold text-accent-gold flex items-center gap-1">
-                  <Edit3 className="w-4 h-4 text-accent-gold" /> নিজের রাইটিং পরীক্ষা করুন:
-                </p>
-                <textarea
-                  value={customInput}
-                  onChange={(e) => setCustomInput(e.target.value)}
-                  placeholder="যেমন: In my opinion, technology is good because it connects people..."
-                  rows={3}
-                  className="w-full bg-navy-secondary text-slate-200 text-xs p-3 rounded-lg focus:outline-none focus:ring-1 focus:ring-accent-gold border border-white/10"
-                ></textarea>
-                <button
-                  onClick={handleUpgradeCustom}
-                  className="w-full bg-accent-gold hover:bg-yellow-600 text-navy-primary font-bold text-xs py-2.5 rounded-lg transition-all"
-                  id="upgrade-button"
-                >
-                  আইইএলটিএস আপগ্রেড চেক করুন
-                </button>
-              </div>
+      {SHOW_UPGRADE_TOOL && (
+        <section id="upgrade-tool" className="py-16 bg-navy-secondary text-white relative">
+          <div className="container mx-auto px-4">
+            <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+              <span className="text-accent-gold font-bold text-xs uppercase tracking-widest bg-accent-gold/10 px-3 py-1 rounded-full border border-accent-gold/20 flex items-center gap-1 w-max mx-auto">
+                <Zap className="w-3 h-3 text-accent-gold" /> Practice & Upgrade Simulator
+              </span>
+              <h2 className="text-2xl md:text-4xl font-bold">IELTS Writing Upgrader</h2>
+              <p className="text-slate-300 text-sm md:text-base">
+                নিচে যেকোনো একটি মডিউল বা টপিক সিলেক্ট করে দেখুন কিভাবে সাধারণ বাক্যগুলোকে প্রফেশনাল এবং হাই-স্কোরিং রাইটিং-এ পরিবর্তন করা যায়।
+              </p>
             </div>
 
-            {/* Comparison Playground Column */}
-            <div className="lg:col-span-8 bg-navy-primary rounded-2xl p-6 md:p-8 border border-white/10 shadow-xl space-y-6">
+            <div className="grid lg:grid-cols-12 gap-8 items-start">
               
-              {/* If custom result exists, show analysis */}
-              {customResult ? (
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center bg-navy-secondary p-3 rounded-lg border border-white/5">
-                    <span className="text-xs text-slate-300">আপনার ইনপুট ফলাফল বিশ্লেষণ:</span>
-                    <button 
-                      onClick={() => setCustomResult(null)} 
-                      className="text-xs text-accent-red hover:underline"
-                    >
-                      মূল এক্সাম্পল দেখুন ➔
-                    </button>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="bg-red-950/20 p-4 rounded-xl border border-accent-red/20">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs font-bold text-accent-red bg-accent-red/10 px-2 py-0.5 rounded">আপনার বাক্য</span>
-                        <span className="text-xs text-slate-400">Band 5.0 - 5.5 (সাধারণ)</span>
-                      </div>
-                      <p className="text-slate-300 text-sm italic font-mono">"{customResult.original}"</p>
+              {/* Topic Select Button Column */}
+              <div className="lg:col-span-4 space-y-3">
+                <p className="text-xs uppercase font-bold text-slate-400 tracking-wider">টপিক নির্বাচন করুন:</p>
+                {UPGRADE_SAMPLES.map((sample) => (
+                  <button
+                    key={sample.id}
+                    onClick={() => {
+                      setSelectedSample(sample);
+                      setCustomResult(null);
+                    }}
+                    className={`w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-center justify-between ${
+                      selectedSample.id === sample.id 
+                      ? 'bg-accent-red border-accent-red text-white shadow-lg translate-x-2'
+                      : 'bg-navy-primary/60 border-slate-750 text-slate-300 hover:bg-navy-primary hover:text-white'
+                    }`}
+                    id={`sample-btn-${sample.id}`}
+                  >
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-white/75 font-semibold uppercase">{sample.topic}</p>
+                      <p className="font-bold text-sm sm:text-base">{sample.title}</p>
                     </div>
+                    <ChevronRight className={`w-5 h-5 opacity-70 ${selectedSample.id === sample.id ? 'translate-x-1' : ''}`} />
+                  </button>
+                ))}
 
-                    <div className="bg-emerald-950/20 p-4 rounded-xl border border-emerald-500/20">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">প্রেশেশনাল ব্যান্ড ৭.৫+ বাক্য</span>
-                        <span className="text-xs text-accent-gold font-bold">{customResult.potentialScore}</span>
-                      </div>
-                      <p className="text-emerald-200 text-sm font-semibold">"{customResult.improved}"</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 bg-navy-secondary/60 p-5 rounded-xl border border-white/5">
-                    <p className="text-sm font-bold text-accent-gold flex items-center gap-1.5">
-                      <TrendingUp className="w-4 h-4 text-accent-gold" /> স্কোর বুস্টার টিপস ও বিশ্লেষণ:
-                    </p>
-                    <ul className="text-xs text-slate-300 space-y-2.5 list-disc list-inside">
-                      {customResult.feedback.map((note, idx) => (
-                        <li key={idx} className="leading-relaxed">{note}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="text-center p-3 bg-accent-red/5 rounded-lg border border-accent-red/10">
-                    <p className="text-xs text-slate-300">এরকম হাজারো অ্যাডভান্সড পরিবর্তন এবং ওয়ান-টু-ওয়ান ফিডব্যাক পাবেন আমাদের কোর্সে।</p>
-                  </div>
+                {/* Try your own sentence quick box */}
+                <div className="bg-navy-primary/40 p-5 rounded-2xl border border-white/5 space-y-3 mt-6">
+                  <p className="text-xs font-bold text-accent-gold flex items-center gap-1">
+                    <Edit3 className="w-4 h-4 text-accent-gold" /> নিজের রাইটিং পরীক্ষা করুন:
+                  </p>
+                  <textarea
+                    value={customInput}
+                    onChange={(e) => setCustomInput(e.target.value)}
+                    placeholder="যেমন: In my opinion, technology is good because it connects people..."
+                    rows={3}
+                    className="w-full bg-navy-secondary text-slate-200 text-xs p-3 rounded-lg focus:outline-none focus:ring-1 focus:ring-accent-gold border border-white/10"
+                  ></textarea>
+                  <button
+                    onClick={handleUpgradeCustom}
+                    className="w-full bg-accent-gold hover:bg-yellow-600 text-navy-primary font-bold text-xs py-2.5 rounded-lg transition-all"
+                    id="upgrade-button"
+                  >
+                    আইইএলটিএস আপগ্রেড চেক করুন
+                  </button>
                 </div>
-              ) : (
-                /* Default selected prompt card details */
-                <div className="space-y-6">
-                  <div>
-                    <span className="text-xs bg-accent-red/20 text-accent-red border border-accent-red/30 px-2 py-0.5 rounded font-mono uppercase">
-                      Essay Topic: {selectedSample.topic}
-                    </span>
-                    <h4 className="text-lg font-bold text-white mt-2">"{selectedSample.prompt}"</h4>
-                  </div>
+              </div>
 
-                  <div className="grid md:grid-cols-2 gap-6 pb-2">
-                    
-                    {/* Average Output */}
-                    <div className="bg-navy-secondary/60 p-5 rounded-xl border border-white/5 relative group hover:border-red-500/30 transition-all">
-                      <span className="absolute -top-3 left-4 bg-red-950 text-accent-red text-[10px] uppercase font-bold border border-accent-red/30 px-2 py-0.5 rounded-full">
-                        Typical Mistakes
+              {/* Comparison Playground Column */}
+              <div className="lg:col-span-8 bg-navy-primary rounded-2xl p-6 md:p-8 border border-white/10 shadow-xl space-y-6">
+                
+                {/* If custom result exists, show analysis */}
+                {customResult ? (
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-center bg-navy-secondary p-3 rounded-lg border border-white/5">
+                      <span className="text-xs text-slate-300">আপনার ইনপুট ফলাফল বিশ্লেষণ:</span>
+                      <button 
+                        onClick={() => setCustomResult(null)} 
+                        className="text-xs text-accent-red hover:underline"
+                      >
+                        মূল এক্সাম্পল দেখুন ➔
+                      </button>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-red-950/20 p-4 rounded-xl border border-accent-red/20">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs font-bold text-accent-red bg-accent-red/10 px-2 py-0.5 rounded">আপনার বাক্য</span>
+                          <span className="text-xs text-slate-400">Band 5.0 - 5.5 (সাধারণ)</span>
+                        </div>
+                        <p className="text-slate-300 text-sm italic font-mono">"{customResult.original}"</p>
+                      </div>
+
+                      <div className="bg-emerald-950/20 p-4 rounded-xl border border-emerald-500/20">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">প্রেশেশনাল ব্যান্ড ৭.৫+ বাক্য</span>
+                          <span className="text-xs text-accent-gold font-bold">{customResult.potentialScore}</span>
+                        </div>
+                        <p className="text-emerald-200 text-sm font-semibold">"{customResult.improved}"</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 bg-navy-secondary/60 p-5 rounded-xl border border-white/5">
+                      <p className="text-sm font-bold text-accent-gold flex items-center gap-1.5">
+                        <TrendingUp className="w-4 h-4 text-accent-gold" /> স্কোর বুস্টার টিপস ও বিশ্লেষণ:
+                      </p>
+                      <ul className="text-xs text-slate-300 space-y-2.5 list-disc list-inside">
+                        {customResult.feedback.map((note, idx) => (
+                          <li key={idx} className="leading-relaxed">{note}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="text-center p-3 bg-accent-red/5 rounded-lg border border-accent-red/10">
+                      <p className="text-xs text-slate-300">এরকম হাজারো অ্যাডভান্সড পরিবর্তন এবং ওয়ান-টু-ওয়ান ফিডব্যাক পাবেন আমাদের কোর্সে।</p>
+                    </div>
+                  </div>
+                ) : (
+                  /* Default selected prompt card details */
+                  <div className="space-y-6">
+                    <div>
+                      <span className="text-xs bg-accent-red/20 text-accent-red border border-accent-red/30 px-2 py-0.5 rounded font-mono uppercase">
+                        Essay Topic: {selectedSample.topic}
                       </span>
-                      <div className="space-y-3 pt-2">
-                        <p className="text-sm text-slate-300 italic">"{selectedSample.badText}"</p>
-                        <div className="flex items-center gap-2 text-xs">
-                          <span className="text-slate-400">ব্যবহৃত শব্দাবলী:</span>
-                          <span className="text-accent-red font-semibold">very, big, bad, only</span>
-                        </div>
-                        <div className="bg-accent-red/10 py-1.5 px-3 rounded text-[11px] text-accent-red font-bold w-max">
-                          📊 আনুমানিক স্কোর: {selectedSample.scoreBad}
-                        </div>
-                      </div>
+                      <h4 className="text-lg font-bold text-white mt-2">"{selectedSample.prompt}"</h4>
                     </div>
 
-                    {/* Band 7.5+ Masterclass Output */}
-                    <div className="bg-navy-secondary/80 p-5 rounded-xl border border-accent-gold/20 relative group hover:border-accent-gold/40 transition-all">
-                      <span className="absolute -top-3 left-4 bg-yellow-950 text-accent-gold text-[10px] uppercase font-bold border border-accent-gold/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <Sparkles className="w-2.5 h-2.5" /> High-Band Solution
-                      </span>
-                      <div className="space-y-3 pt-2">
-                        <p className="text-sm text-emerald-200 font-medium leading-relaxed">"{selectedSample.goodText}"</p>
-                        <div className="flex items-center gap-2 text-xs">
-                          <span className="text-slate-400">একাডেমিক লেক্সিকাল:</span>
-                          <span className="text-accent-gold font-semibold">anthropogenic, paramount, restoration</span>
+                    <div className="grid md:grid-cols-2 gap-6 pb-2">
+                      
+                      {/* Average Output */}
+                      <div className="bg-navy-secondary/60 p-5 rounded-xl border border-white/5 relative group hover:border-red-500/30 transition-all">
+                        <span className="absolute -top-3 left-4 bg-red-950 text-accent-red text-[10px] uppercase font-bold border border-accent-red/30 px-2 py-0.5 rounded-full">
+                          Typical Mistakes
+                        </span>
+                        <div className="space-y-3 pt-2">
+                          <p className="text-sm text-slate-300 italic">"{selectedSample.badText}"</p>
+                          <div className="flex items-center gap-2 text-xs">
+                            <span className="text-slate-400">ব্যবহৃত শব্দাবলী:</span>
+                            <span className="text-accent-red font-semibold">very, big, bad, only</span>
+                          </div>
+                          <div className="bg-accent-red/10 py-1.5 px-3 rounded text-[11px] text-accent-red font-bold w-max">
+                            📊 আনুমানিক স্কোর: {selectedSample.scoreBad}
+                          </div>
                         </div>
-                        <div className="bg-accent-gold/15 py-1.5 px-3 rounded text-[11px] text-accent-gold font-bold w-max">
-                          🏆 আনুমানিক স্কোর: {selectedSample.scoreGood}
+                      </div>
+
+                      {/* Band 7.5+ Masterclass Output */}
+                      <div className="bg-navy-secondary/80 p-5 rounded-xl border border-accent-gold/20 relative group hover:border-accent-gold/40 transition-all">
+                        <span className="absolute -top-3 left-4 bg-yellow-950 text-accent-gold text-[10px] uppercase font-bold border border-accent-gold/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <Sparkles className="w-2.5 h-2.5" /> High-Band Solution
+                        </span>
+                        <div className="space-y-3 pt-2">
+                          <p className="text-sm text-emerald-200 font-medium leading-relaxed">"{selectedSample.goodText}"</p>
+                          <div className="flex items-center gap-2 text-xs">
+                            <span className="text-slate-400">একাডেমিক লেক্সিকাল:</span>
+                            <span className="text-accent-gold font-semibold">anthropogenic, paramount, restoration</span>
+                          </div>
+                          <div className="bg-accent-gold/15 py-1.5 px-3 rounded text-[11px] text-accent-gold font-bold w-max">
+                            🏆 আনুমানিক স্কোর: {selectedSample.scoreGood}
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    {/* Criteria Analysis Cards inside simulator */}
+                    <div className="border-t border-white/10 pt-6 space-y-4">
+                      <p className="text-xs uppercase font-bold text-slate-400 tracking-wider">কিভাবে ব্যান্ড ৮.০ উত্তর তৈরি করা হলো?</p>
+                      
+                      <div className="grid sm:grid-cols-3 gap-4">
+                        <div className="bg-navy-secondary/40 p-4 rounded-xl border border-white/5 space-y-1">
+                          <p className="text-xs font-bold text-accent-gold">Vocabulary (শব্দভান্ডার)</p>
+                          <p className="text-[11px] text-slate-300 leading-relaxed">{selectedSample.vocabularyTip}</p>
+                        </div>
+                        <div className="bg-navy-secondary/40 p-4 rounded-xl border border-white/5 space-y-1">
+                          <p className="text-xs font-bold text-accent-gold">Grammar (ব্যাকরণ পরিসীমা)</p>
+                          <p className="text-[11px] text-slate-300 leading-relaxed">{selectedSample.grammarTip}</p>
+                        </div>
+                        <div className="bg-navy-secondary/40 p-4 rounded-xl border border-white/5 space-y-1">
+                          <p className="text-xs font-bold text-accent-gold">Cohesion (ধারাবাহিকতা)</p>
+                          <p className="text-[11px] text-slate-300 leading-relaxed">{selectedSample.coherenceTip}</p>
                         </div>
                       </div>
                     </div>
 
                   </div>
+                )}
 
-                  {/* Criteria Analysis Cards inside simulator */}
-                  <div className="border-t border-white/10 pt-6 space-y-4">
-                    <p className="text-xs uppercase font-bold text-slate-400 tracking-wider">কিভাবে ব্যান্ড ৮.০ উত্তর তৈরি করা হলো?</p>
-                    
-                    <div className="grid sm:grid-cols-3 gap-4">
-                      <div className="bg-navy-secondary/40 p-4 rounded-xl border border-white/5 space-y-1">
-                        <p className="text-xs font-bold text-accent-gold">Vocabulary (শব্দভান্ডার)</p>
-                        <p className="text-[11px] text-slate-300 leading-relaxed">{selectedSample.vocabularyTip}</p>
-                      </div>
-                      <div className="bg-navy-secondary/40 p-4 rounded-xl border border-white/5 space-y-1">
-                        <p className="text-xs font-bold text-accent-gold">Grammar (ব্যাকরণ পরিসীমা)</p>
-                        <p className="text-[11px] text-slate-300 leading-relaxed">{selectedSample.grammarTip}</p>
-                      </div>
-                      <div className="bg-navy-secondary/40 p-4 rounded-xl border border-white/5 space-y-1">
-                        <p className="text-xs font-bold text-accent-gold">Cohesion (ধারাবাহিকতা)</p>
-                        <p className="text-[11px] text-slate-300 leading-relaxed">{selectedSample.coherenceTip}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              )}
+              </div>
 
             </div>
-
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Core Problems We Solve Section */}
       <section id="features" className="py-16 bg-white relative">
@@ -1588,12 +1595,72 @@ export default function App() {
 
           <div className="max-w-4xl mx-auto space-y-4">
             
-            {/* Module 1 */}
+            {/* Module 1 (Foundation) */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 bg-gradient-to-br from-white to-emerald-50/10 hover:shadow-md transition-all relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-[#10b981] text-white text-[10px] font-extrabold px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-sm">
+                Special Foundation
+              </div>
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                <div className="space-y-2 w-full">
+                  <span className="text-xs font-extrabold text-[#10b981] bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    Module 01 (Foundation)
+                  </span>
+                  <h3 className="text-lg md:text-xl font-bold text-navy-primary flex items-center gap-2">
+                    IELTS Writing Basics & Grammar <span className="text-xs font-medium text-[#10b981] bg-emerald-50 px-2 py-0.5 rounded">(যারা রাইটিং-এ দুর্বল তাদের জন্য)</span>
+                  </h3>
+                  <p className="text-slate-500 text-xs">আইইএলটিএস রাইটিং শুরু করার আগে বেসিক ব্যাকরণ, বাক্য গঠন এবং লেখার মজবুত ভিত্তি তৈরিতে বিশেষ লেকচারসমূহ।</p>
+                  
+                  <div className="grid md:grid-cols-2 gap-x-6 gap-y-3 mt-4 text-xs sm:text-sm text-slate-600">
+                    <div className="flex items-start gap-2 bg-slate-50 p-2 rounded-xl">
+                      <span className="text-accent-red font-bold mt-0.5 shrink-0">১.</span>
+                      <span><strong>Sentence Rules & Structures:</strong> Correct, incorrect sentence identifying, and resolving fragmentation/incomplete sentence errors.</span>
+                    </div>
+
+                    <div className="flex items-start gap-2 bg-slate-50 p-2 rounded-xl">
+                      <span className="text-accent-red font-bold mt-0.5 shrink-0">২.</span>
+                      <span><strong>Sentence Clarity & Flow:</strong> High-scoring structural clarity, appropriate use of Commas, Complex Linkers, and FANBOYS.</span>
+                    </div>
+
+                    <div className="flex items-start gap-2 bg-slate-50 p-2 rounded-xl">
+                      <span className="text-accent-red font-bold mt-0.5 shrink-0">৩.</span>
+                      <span><strong>Academic Word Collocation:</strong> Topic-wise Collocations lists, accurate word registry, and usage guidelines.</span>
+                    </div>
+
+                    <div className="flex items-start gap-2 bg-slate-50 p-2 rounded-xl">
+                      <span className="text-accent-red font-bold mt-0.5 shrink-0">৪.</span>
+                      <span><strong>Topic Sentence & Thesis Statement:</strong> Effective Paragraph Openings, and writing crystal-clear IELTS Thesis statements.</span>
+                    </div>
+
+                    <div className="flex items-start gap-2 bg-slate-50 p-2 rounded-xl">
+                      <span className="text-accent-red font-bold mt-0.5 shrink-0">৫.</span>
+                      <span><strong>Pre-Writing Strategy:</strong> Essential ideation techniques, Brainstorming, and Mind Mapping.</span>
+                    </div>
+
+                    <div className="flex items-start gap-2 bg-slate-50 p-2 rounded-xl">
+                      <span className="text-accent-red font-bold mt-0.5 shrink-0">৬.</span>
+                      <span><strong>Paraphrasing Techniques:</strong> Restructuring prompt questions with precise vocabulary and grammatical variance.</span>
+                    </div>
+
+                    <div className="flex items-start gap-2 bg-slate-50 p-2 rounded-xl">
+                      <span className="text-accent-red font-bold mt-0.5 shrink-0">৭.</span>
+                      <span><strong>Paragraph writing:</strong> Understanding different types of paragraphs and structuring cohesive body writing.</span>
+                    </div>
+
+                    <div className="flex items-start gap-2 bg-slate-50 p-2 rounded-xl">
+                      <span className="text-accent-red font-bold mt-0.5 shrink-0">৮.</span>
+                      <span><strong>5 Paragraph Essay Writing Guidelines:</strong> Structuring full band-9 style essays with standard paragraph templates.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Module 2 */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
               <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                 <div className="space-y-2">
                   <span className="text-xs font-extrabold text-accent-red bg-red-50 border border-red-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    Module 01
+                    Module 02
                   </span>
                   <h3 className="text-lg md:text-xl font-bold text-navy-primary">Writing Task 1 (Academic & General Letter)</h3>
                   <p className="text-slate-500 text-xs">আইইএলটিএস রাইটিং টাস্ক-১ এর জন্য আমাদের ডেডিকেটেড সেশনসমূহ।</p>
@@ -1616,12 +1683,12 @@ export default function App() {
               </div>
             </div>
 
-            {/* Module 2 */}
+            {/* Module 3 */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
               <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                 <div className="space-y-2">
                   <span className="text-xs font-extrabold text-accent-red bg-red-50 border border-red-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    Module 02
+                    Module 03
                   </span>
                   <h3 className="text-lg md:text-xl font-bold text-navy-primary">Writing Task 2 (Essay Mastery - ৫ টাইপ)</h3>
                   <p className="text-slate-500 text-xs">এটির মাধ্যমে আপনারTask 2 এসএ রাইটিং মডিউলকে পূর্ণাঙ্গ বুস্ট করুন।</p>
@@ -1644,12 +1711,12 @@ export default function App() {
               </div>
             </div>
 
-            {/* Module 3 */}
+            {/* Module 4 */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
               <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                 <div className="space-y-2">
                   <span className="text-xs font-extrabold text-accent-red bg-red-50 border border-red-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    Module 03
+                    Module 04
                   </span>
                   <h3 className="text-lg md:text-xl font-bold text-navy-primary">Personalized Evaluation & Mock Feedback</h3>
                   <p className="text-slate-500 text-xs">আপনার লেখার ওপরে সরাসরি কাজের ভুলগুলো শোধরানোর ডেডিকেটেড সেশন।</p>
