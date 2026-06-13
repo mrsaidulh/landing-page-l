@@ -570,8 +570,8 @@ async function startServer() {
           email: email || "",
           phone: phone,
           
-          source: "Website Landing Page (OTP Verified)",
-          lead_source: "Website Landing Page (OTP Verified)",
+          source: "Landing Page (OTP Verified)",
+          lead_source: "Landing Page (OTP Verified)",
           
           status: "New Lead",
           lead_status: "New Lead",
