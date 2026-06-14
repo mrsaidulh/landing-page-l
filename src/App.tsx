@@ -1114,17 +1114,6 @@ export default function App() {
                         />
                       </div>
 
-                      {testOtpHint && (
-                        <div className="bg-amber-50 border-l-4 border-amber-500 p-2.5 rounded text-[11px] text-amber-900 leading-relaxed space-y-1">
-                          <p className="font-bold flex items-center gap-1 text-amber-800">
-                            <span>🧪 টেস্ট ডেভলপমেন্ট মোড সচল:</span>
-                          </p>
-                          <p>
-                            আপনার সাবমিট করা ওটিপি কোড: <strong className="bg-amber-200 px-1 py-0.5 rounded text-navy-primary font-mono text-xs">{testOtpHint}</strong>
-                          </p>
-                          <p className="text-[10px] text-slate-400">বিকাশ/নগদ এসএমএস গেটওয়ে সংযুক্ত নেই, সরাসরি উপরোক্ত কোডটি টাইপ করে ভেরিফিকেশন পরীক্ষা করুন।</p>
-                        </div>
-                      )}
 
                       <button 
                         type="submit" 

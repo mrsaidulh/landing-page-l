@@ -451,8 +451,7 @@ async function startServer() {
         return res.json({
           success: true,
           isDemoFallback: true,
-          message: isCustomCrm ? "সিআরএম ওটিপি সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না। অনুগ্রহ করে CRM_API_URL চেক করুন।" : "ওটিপি সার্ভারের সংযোগে সমস্যা থাকায় টেস্ট মুড সচল করা হয়েছে।",
-          otpCodeDebug: isCustomCrm ? undefined : "123456"
+          message: "সিআরএম ওটিপি সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না। অনুগ্রহ করে CRM_API_URL চেক করুন।"
         });
       }
 
@@ -466,8 +465,7 @@ async function startServer() {
         return res.json({
           success: true,
           isDemoFallback: true,
-          message: isCustomCrm ? "সিকিউরিটি কুওকি ব্লকের কারণে ওটিপি পাঠানো যায়নি।" : "সিকিউরিটি কুকি ব্লকের কারণে ওটিপি টেস্ট মুড সচল করা হয়েছে।",
-          otpCodeDebug: isCustomCrm ? undefined : "123456"
+          message: "সিকিউরিটি কুকি ব্লকের কারণে ওটিপি পাঠানো যায়নি।"
         });
       }
 
@@ -481,8 +479,7 @@ async function startServer() {
       if (response.ok && responseData.success !== false && responseData.status !== "failed" && responseData.error === undefined) {
         return res.json({
           success: true,
-          message: responseData.message || "OTP code dispatched successfully from your CRM.",
-          otpCodeDebug: isCustomCrm ? undefined : (responseData.demoCode || responseData.code || "123456")
+          message: responseData.message || "OTP code dispatched successfully from your CRM."
         });
       } else {
         // Clean fallback for testing purpose even if CRM rejects with an error
@@ -490,8 +487,7 @@ async function startServer() {
         return res.json({
           success: true,
           isDemoFallback: true,
-          message: isCustomCrm ? `সিআরএম ওটিপি পাঠাতে ব্যর্থ হয়েছে। ত্রুটি: ${responseData.error || responseData.message || 'বিকাশ/নগদ এসএমএস গেটওয়ে বা ব্যালেন্স সমস্যা'}` : "সিআরএম ওটিপি পাঠাতে না পারায় ওটিপি টেস্ট মুড (১৪৩৪৫৬) সচল করা হয়েছে।",
-          otpCodeDebug: isCustomCrm ? undefined : "123456"
+          message: `সিআরএম ওটিপি পাঠাতে ব্যর্থ হয়েছে। ত্রুটি: ${responseData.error || responseData.message || 'বিকাশ/নগদ এসএমএস গেটওয়ে বা ব্যালেন্স সমস্যা'}`
         });
       }
 
@@ -500,8 +496,7 @@ async function startServer() {
       // Ensure front end testing is never broken: send fallback success
       res.json({
         success: true,
-        message: "টেস্ট মুডে ওটিপি কোড সচল করা হয়েছে।",
-        otpCodeDebug: "123456"
+        message: "ওটিপি সার্ভার সংযোগ এরর।"
       });
     }
   });
