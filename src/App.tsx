@@ -878,7 +878,7 @@ export default function App() {
                 <span className="text-xs text-slate-400">কোর্স রেটিং</span>
               </div>
               <div className="text-center">
-                <span className="block text-2xl md:text-3xl font-extrabold text-white">300+</span>
+                <span className="block text-2xl md:text-3xl font-extrabold text-white">১৫০+</span>
                 <span className="text-xs text-slate-400">সন্তুষ্ট শিক্ষার্থী</span>
               </div>
             </div>
