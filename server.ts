@@ -407,9 +407,13 @@ async function startServer() {
 
       const crmUrl = process.env.CRM_API_URL || DEFAULT_CRM_URL;
       const apiKey = process.env.CRM_API_KEY || DEFAULT_CRM_KEY;
+      const isCustomCrm = (crmUrl !== DEFAULT_CRM_URL || apiKey !== DEFAULT_CRM_KEY);
 
       const endpoint = getEndpoint(crmUrl, "otp/send");
       console.log(`Requesting CRM OTP Send endpoint for phone: ${phone} (URL: ${endpoint})`);
+
+      const cleanPhone = phone.replace(/^\+/, ""); // e.g. "8801712327286"
+      const rawPhone = phone.replace(/^\+880/, "0"); // e.g. "01712327286"
 
       let response;
       let networkErrorOccurred = false;
@@ -426,7 +430,14 @@ async function startServer() {
               "X-CRM-API-Key": apiKey
             } : {})
           },
-          body: JSON.stringify({ phone }),
+          body: JSON.stringify({ 
+            phone,
+            phone_number: phone,
+            mobile: phone,
+            cleanPhone,
+            rawPhone,
+            number: rawPhone
+          }),
         });
       } catch (remoteError: any) {
         console.error(`Could not reach CRM at ${endpoint}:`, remoteError.message);
@@ -440,8 +451,8 @@ async function startServer() {
         return res.json({
           success: true,
           isDemoFallback: true,
-          message: "ওটিপি সার্ভারের সংযোগে সমস্যা থাকায় টেস্ট মুড সচল করা হয়েছে।",
-          otpCodeDebug: "123456"
+          message: isCustomCrm ? "সিআরএম ওটিপি সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না। অনুগ্রহ করে CRM_API_URL চেক করুন।" : "ওটিপি সার্ভারের সংযোগে সমস্যা থাকায় টেস্ট মুড সচল করা হয়েছে।",
+          otpCodeDebug: isCustomCrm ? undefined : "123456"
         });
       }
 
@@ -455,8 +466,8 @@ async function startServer() {
         return res.json({
           success: true,
           isDemoFallback: true,
-          message: "সিকিউরিটি কুকি ব্লকের কারণে ওটিপি টেস্ট মুড সচল করা হয়েছে।",
-          otpCodeDebug: "123456"
+          message: isCustomCrm ? "সিকিউরিটি কুওকি ব্লকের কারণে ওটিপি পাঠানো যায়নি।" : "সিকিউরিটি কুকি ব্লকের কারণে ওটিপি টেস্ট মুড সচল করা হয়েছে।",
+          otpCodeDebug: isCustomCrm ? undefined : "123456"
         });
       }
 
@@ -471,7 +482,7 @@ async function startServer() {
         return res.json({
           success: true,
           message: responseData.message || "OTP code dispatched successfully from your CRM.",
-          otpCodeDebug: responseData.demoCode || responseData.code || "123456"
+          otpCodeDebug: isCustomCrm ? undefined : (responseData.demoCode || responseData.code || "123456")
         });
       } else {
         // Clean fallback for testing purpose even if CRM rejects with an error
@@ -479,8 +490,8 @@ async function startServer() {
         return res.json({
           success: true,
           isDemoFallback: true,
-          message: "সিআরএম ওটিপি পাঠাতে না পারায় ওটিপি টেস্ট মুড (১৪৩৪৫৬) সচল করা হয়েছে।",
-          otpCodeDebug: "123456"
+          message: isCustomCrm ? `সিআরএম ওটিপি পাঠাতে ব্যর্থ হয়েছে। ত্রুটি: ${responseData.error || responseData.message || 'বিকাশ/নগদ এসএমএস গেটওয়ে বা ব্যালেন্স সমস্যা'}` : "সিআরএম ওটিপি পাঠাতে না পারায় ওটিপি টেস্ট মুড (১৪৩৪৫৬) সচল করা হয়েছে।",
+          otpCodeDebug: isCustomCrm ? undefined : "123456"
         });
       }
 
@@ -521,6 +532,9 @@ async function startServer() {
         try {
           const endpoint = getEndpoint(crmUrl, "otp/verify");
           console.log(`Verifying OTP with live CRM endpoint: ${endpoint}`);
+          const cleanPhone = phone.replace(/^\+/, ""); // e.g. "8801712327286"
+          const rawPhone = phone.replace(/^\+880/, "0"); // e.g. "01712327286"
+
           const response = await fetch(endpoint, {
             method: "POST",
             headers: {
@@ -531,7 +545,16 @@ async function startServer() {
                 "X-CRM-API-Key": apiKey
               } : {})
             },
-            body: JSON.stringify({ phone, otp, code: otp }),
+            body: JSON.stringify({ 
+              phone, 
+              phone_number: phone,
+              mobile: phone,
+              cleanPhone,
+              rawPhone,
+              otp, 
+              code: otp,
+              otpCode: otp
+            }),
           });
 
           const responseText = await response.text();
