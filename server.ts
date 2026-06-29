@@ -706,8 +706,15 @@ async function startServer() {
     }
   });
 
+  // Auto-detect production mode if NODE_ENV is "production", or if running the compiled bundle,
+  // or if the production build output (dist/index.html) exists and we are not explicitly in development mode.
+  const isCompiled = typeof __filename !== "undefined" && (__filename.endsWith("server.cjs") || __filename.includes("dist"));
+  const isProduction = process.env.NODE_ENV === "production" || 
+    isCompiled || 
+    (process.env.NODE_ENV !== "development" && fs.existsSync(path.join(process.cwd(), "dist", "index.html")));
+
   // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
+  if (!isProduction) {
     const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
